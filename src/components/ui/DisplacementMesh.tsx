@@ -433,13 +433,18 @@ export const DisplacementMesh: React.FC<DisplacementMeshProps> = ({ className = 
 
     window.addEventListener('resize', handleResize)
 
-    // 7. Animation Loop
+    // 7. Animation Loop with Viewport & Visibility Culling
     let animId: number
     let lastTime = performance.now()
 
     const animate = () => {
       if (isDisposed) return
       animId = requestAnimationFrame(animate)
+
+      // Performance Culling: Skip heavy rendering when Hero is scrolled out of view or tab is hidden
+      if (document.hidden || window.scrollY > window.innerHeight * 1.3) {
+        return
+      }
 
       const now = performance.now()
       const dt = Math.min((now - lastTime) / 1000, 0.1)
