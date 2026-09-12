@@ -12,7 +12,7 @@ export const Hero: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % personalInfo.roles.length)
-    }, 3600)
+    }, 4500)
 
     return () => clearInterval(interval)
   }, [])
@@ -20,11 +20,6 @@ export const Hero: React.FC = () => {
   const currentRole = personalInfo.roles[roleIndex]
 
   const handleDownloadResume = () => {
-    // Generate/download resume text or PDF trigger
-    const link = document.createElement('a')
-    link.href = '#download-resume'
-    link.download = 'Dickson_E_Resume.pdf'
-    // Create an informative alert/notice or download trigger
     window.open('https://github.com/DicksonLegend', '_blank')
   }
 
@@ -32,45 +27,53 @@ export const Hero: React.FC = () => {
     <section
       id="hero"
       aria-label="Hero Introduction"
-      className="relative min-h-[100dvh] w-full flex items-center justify-between overflow-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-12"
+      className="relative min-h-[100dvh] w-full flex items-center overflow-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 select-none"
     >
-      {/* 1. Left Content Area */}
-      <div className="relative z-10 max-w-2xl pt-20 pb-16 md:py-24">
-        {/* Eyebrow Name with Decoder Effect */}
+      {/* 1. Fullscreen 3D WebGL Organic Displacement Mesh Canvas */}
+      <DisplacementMesh />
+
+      {/* 2. Left Content Container (Exact Hamish Williams hierarchy & spacing) */}
+      <div className="relative z-10 max-w-4xl pt-16 pb-20 md:py-24">
+        {/* Name: Scaled up to 1.5rem (24px) with 0.3em letter spacing matching hamishw.com */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="mb-4 flex items-center gap-2.5"
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="mb-8 md:mb-12"
         >
-          <span className="text-xs md:text-sm font-mono tracking-[0.3em] uppercase text-[var(--text-muted)] font-medium">
-            <DecoderText text={personalInfo.name.toUpperCase()} startDelay={300} speed={35} />
-          </span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+          <h1 className="text-xl sm:text-2xl font-medium tracking-[0.3em] uppercase text-[var(--textLight)] inline-flex items-center gap-3">
+            <DecoderText text={personalInfo.name.toUpperCase()} startDelay={400} speed={30} />
+          </h1>
         </motion.div>
 
-        {/* Main Heading with Two Rows & Extending Horizontal Line */}
-        <div className="space-y-1 md:space-y-2">
-          {/* Row 1: Primary Title + Extending Divider Line */}
+        {/* Main Heading: Two Large Lines with Horizontal Extension */}
+        <div className="space-y-2 md:space-y-3">
+          {/* Line 1: Primary Role + Animated Extending Horizontal Line */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex items-center gap-6"
+            className="flex items-center"
           >
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[var(--text)] leading-[1.08] select-none">
+            <h2 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-[1.08]">
               AI Engineer
-            </h1>
+            </h2>
 
-            {/* Extending horizontal rule matching reference */}
-            <div className="hidden sm:block flex-1 max-w-xs h-[1px] bg-[var(--border)] relative">
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[var(--accent)]/60" />
-            </div>
+            {/* Extending horizontal rule directly from Hamish reference */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.7, ease: [0.4, 0, 0.2, 1] }}
+              style={{ originX: 0 }}
+              className="hidden sm:block flex-1 max-w-[280px] h-[2px] bg-white/20 ml-6 relative"
+            >
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[var(--accent)]" />
+            </motion.div>
           </motion.div>
 
-          {/* Row 2: Rotating Disciplines with Cyan Block Mask Wipe & Decoder */}
-          <div className="flex items-center gap-3 overflow-hidden h-[54px] sm:h-[72px] lg:h-[86px]">
-            <span className="text-3xl sm:text-5xl lg:text-6xl font-extralight text-[var(--text-muted)] select-none">
+          {/* Line 2: Rotating Disciplines with Matching Giant Font & Cyan Mask Wipe */}
+          <div className="flex items-center gap-3 md:gap-4 overflow-hidden h-[60px] sm:h-[84px] lg:h-[104px]">
+            <span className="text-4xl sm:text-6xl lg:text-7xl font-light text-[var(--textLight)] opacity-50 select-none">
               +
             </span>
 
@@ -78,15 +81,15 @@ export const Hero: React.FC = () => {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentRole}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
+                  exit={{ opacity: 0, y: -14 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[var(--text)] leading-none select-none"
+                  className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-none"
                 >
                   <DecoderText
                     text={currentRole}
-                    speed={28}
+                    speed={26}
                     showBlockMask={true}
                     className="font-bold"
                   />
@@ -101,9 +104,9 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-6 flex items-center gap-2 text-xs sm:text-sm font-mono text-[var(--text-muted)] tracking-wider"
+          className="mt-8 flex items-center gap-2.5 text-xs sm:text-sm font-mono text-[var(--textLight)] tracking-wider"
         >
-          <MapPin className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
+          <MapPin className="w-4 h-4 text-[var(--accent)] shrink-0" />
           <span>{personalInfo.subtitle}</span>
         </motion.div>
 
@@ -128,7 +131,7 @@ export const Hero: React.FC = () => {
           {/* Secondary CTA: Download Resume */}
           <button
             onClick={handleDownloadResume}
-            className="group inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/70 px-6 py-3.5 text-sm font-medium text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-300 backdrop-blur-md focus:outline-none"
+            className="group inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--bg-secondary)]/80 px-6 py-3.5 text-sm font-medium text-[var(--textTitle)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-300 backdrop-blur-md focus:outline-none"
             title="Download Dickson E's Resume"
           >
             <Download className="w-4 h-4 text-[var(--accent)] transition-transform duration-300 group-hover:translate-y-0.5" />
@@ -137,25 +140,27 @@ export const Hero: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* 2. Right Side: 3D Organic WebGL Displacement Mesh Canvas */}
-      <div className="absolute top-0 right-0 bottom-0 w-full md:w-[60%] lg:w-[55%] h-full overflow-hidden pointer-events-none z-0 opacity-90 transition-opacity duration-500">
-        <DisplacementMesh />
-      </div>
-
-      {/* 3. Bottom Minimal Scroll Indicator */}
+      {/* 3. Hamish Williams Signature Mouse Scroll Indicator */}
       <motion.a
         href="#projects"
-        aria-label="Scroll down to projects"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-[var(--text-faint)] hover:text-[var(--accent)] transition-colors duration-300"
+        className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[var(--textLight)] hover:text-[var(--accent)] transition-colors group cursor-pointer z-10"
+        aria-label="Scroll to Projects"
       >
-        <div className="w-5 h-9 rounded-full border border-[var(--border)] flex items-start justify-center p-1.5">
+        <div className="w-5 h-8 rounded-full border-2 border-current flex justify-center pt-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
           <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"
+            animate={{
+              y: [0, 8, 0],
+              opacity: [1, 0.2, 1],
+            }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="w-1 h-1.5 rounded-full bg-current"
           />
         </div>
       </motion.a>

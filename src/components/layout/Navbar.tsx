@@ -1,7 +1,6 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
-import { Mail } from 'lucide-react'
+import { Mail, Menu, X } from 'lucide-react'
 import { socialLinks } from '@/data/portfolioData'
 
 export interface NavbarProps {
@@ -24,6 +23,8 @@ const LinkedinIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' 
 )
 
 export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   const navItems = [
     { label: 'Projects', href: '#projects' },
     { label: 'Details', href: '#about' },
@@ -37,61 +38,66 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
 
   return (
     <>
-      {/* 1. Left Vertical Fixed Rail (Desktop) */}
+      {/* 1. Left Vertical Fixed Rail (Hamish Williams signature layout) */}
       <aside
         aria-label="Sidebar Navigation"
-        className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 z-40 flex-col justify-between items-center py-8 border-r border-[var(--border-subtle)] bg-[var(--bg)]/80 backdrop-blur-md select-none transition-colors duration-400"
+        className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 z-40 flex-col justify-between items-center py-10 select-none pointer-events-auto"
       >
-        {/* Top: Monogram Logo */}
+        {/* Top: Monogram 'D' Logo */}
         <a
           href="#hero"
           className="group relative flex items-center justify-center w-12 h-12 focus:outline-none"
           title="Dickson E — AI Engineer"
         >
-          <svg
-            className="w-8 h-8 text-[var(--text)] group-hover:text-[var(--accent)] transition-colors duration-300"
-            viewBox="0 0 32 32"
-            fill="currentColor"
-          >
-            <path d="M6 4h10a12 12 0 0 1 12 12v0a12 12 0 0 1-12 12H6V4zm4 4v16h6a8 8 0 0 0 8-8v0a8 8 0 0 0-8-8h-6z" />
-          </svg>
+          <span className="text-2xl font-bold tracking-tighter text-[var(--textTitle)] group-hover:text-[var(--accent)] transition-colors duration-300">
+            D
+          </span>
           <span className="sr-only">Dickson E Home</span>
         </a>
 
-        {/* Center: Vertical Rotated Nav Links */}
-        <nav className="flex flex-col items-center gap-10 py-6" aria-label="Main sections">
-          {navItems.map((item) => {
-            const isActive = activeSection === item.label.toLowerCase()
-            return (
-              <a
-                key={item.label}
-                href={item.href}
-                className={`relative text-xs tracking-[0.22em] uppercase font-mono transition-colors duration-300 transform -rotate-90 origin-center py-2 ${
-                  isActive
-                    ? 'text-[var(--accent)] font-semibold'
-                    : 'text-[var(--text-faint)] hover:text-[var(--text)]'
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="active-nav-line"
-                    className="absolute -left-3 top-1/2 -translate-y-1/2 w-2 h-0.5 bg-[var(--accent)]"
+        {/* Center: Vertical Rotated Nav List (Exact writing-mode approach from hamishw.com) */}
+        <nav
+          className="relative py-4"
+          aria-label="Main sections"
+          style={{
+            writingMode: 'vertical-lr',
+            transform: 'rotate(180deg)',
+          }}
+        >
+          <div className="flex flex-row-reverse items-center gap-6">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.label.toLowerCase()
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className={`group relative py-3 px-1 text-sm font-medium tracking-[0.18em] transition-colors duration-300 ${
+                    isActive
+                      ? 'text-[var(--textTitle)] font-semibold'
+                      : 'text-[var(--textLight)] hover:text-[var(--textTitle)]'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {/* Subtle accent line on hover / active */}
+                  <span
+                    className={`absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--accent)] transition-transform duration-300 origin-bottom ${
+                      isActive ? 'scale-y-100' : 'scale-y-0 group-hover:scale-y-100'
+                    }`}
                   />
-                )}
-                {item.label}
-              </a>
-            )
-          })}
+                </a>
+              )
+            })}
+          </div>
         </nav>
 
         {/* Bottom: Social Icons */}
-        <div className="flex flex-col items-center gap-4 text-[var(--text-faint)]">
+        <div className="flex flex-col items-center gap-5 text-[var(--textLight)]">
           <a
             href={githubLink}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub Profile"
-            className="p-1.5 hover:text-[var(--accent)] transition-colors duration-300"
+            className="p-1 hover:text-[var(--accent)] transition-colors duration-300"
             title="GitHub"
           >
             <GithubIcon />
@@ -101,7 +107,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn Profile"
-            className="p-1.5 hover:text-[var(--accent)] transition-colors duration-300"
+            className="p-1 hover:text-[var(--accent)] transition-colors duration-300"
             title="LinkedIn"
           >
             <LinkedinIcon />
@@ -109,7 +115,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
           <a
             href={emailLink}
             aria-label="Email Dickson"
-            className="p-1.5 hover:text-[var(--accent)] transition-colors duration-300"
+            className="p-1 hover:text-[var(--accent)] transition-colors duration-300"
             title="Email"
           >
             <Mail className="w-4 h-4" />
@@ -117,22 +123,54 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
         </div>
       </aside>
 
-      {/* 2. Top-Right Floating Theme Switcher */}
-      <header className="fixed top-6 right-6 z-40 flex items-center gap-4">
+      {/* 2. Top-Right Floating Theme Switcher (Hamish Williams placement) */}
+      <div className="fixed top-8 right-8 z-50 pointer-events-auto">
         <ThemeToggle />
+      </div>
+
+      {/* 3. Mobile Header Bar */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
+        <a href="#hero" className="text-xl font-bold tracking-tight text-[var(--textTitle)]">
+          D
+        </a>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 text-[var(--textTitle)] hover:text-[var(--accent)] transition-colors"
+          aria-label="Toggle navigation menu"
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </header>
 
-      {/* 3. Mobile Header Bar (Mobile only) */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-4 bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
-        <a href="#hero" className="flex items-center gap-2">
-          <svg className="w-6 h-6 text-[var(--accent)]" viewBox="0 0 32 32" fill="currentColor">
-            <path d="M6 4h10a12 12 0 0 1 12 12v0a12 12 0 0 1-12 12H6V4zm4 4v16h6a8 8 0 0 0 8-8v0a8 8 0 0 0-8-8h-6z" />
-          </svg>
-          <span className="font-mono text-xs tracking-widest font-bold uppercase text-[var(--text)]">
-            DICKSON E
-          </span>
-        </a>
-      </div>
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-30 bg-[var(--bg)]/98 backdrop-blur-lg pt-24 px-8 flex flex-col justify-between pb-12">
+          <nav className="flex flex-col gap-6 text-2xl font-bold tracking-tight">
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2 text-[var(--textTitle)] hover:text-[var(--accent)] transition-colors border-b border-[var(--border-subtle)]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-6 pt-6 border-t border-[var(--border-subtle)]">
+            <a href={githubLink} target="_blank" rel="noopener noreferrer" className="text-[var(--textLight)] hover:text-[var(--accent)]">
+              <GithubIcon className="w-5 h-5" />
+            </a>
+            <a href={linkedinLink} target="_blank" rel="noopener noreferrer" className="text-[var(--textLight)] hover:text-[var(--accent)]">
+              <LinkedinIcon className="w-5 h-5" />
+            </a>
+            <a href={emailLink} className="text-[var(--textLight)] hover:text-[var(--accent)]">
+              <Mail className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+      )}
     </>
   )
 }

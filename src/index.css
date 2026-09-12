@@ -1,36 +1,78 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Gotham';
+  font-weight: 400;
+  src: url('/fonts/gotham-book.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  font-weight: 500;
+  src: url('/fonts/gotham-medium.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham';
+  font-weight: 700;
+  src: url('/fonts/gotham-bold.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'IPA Gothic';
+  font-weight: 400;
+  src: url('/fonts/ipa-gothic.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+}
+
 @theme {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'Gotham', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 :root {
-  --bg: #111215;
-  --bg-secondary: #181a1f;
-  --text: #ffffff;
-  --text-muted: rgba(255, 255, 255, 0.72);
-  --text-faint: rgba(255, 255, 255, 0.42);
-  --accent: #00e5ff;
-  --accent-glow: rgba(0, 229, 255, 0.25);
-  --border: rgba(255, 255, 255, 0.1);
-  --border-subtle: rgba(255, 255, 255, 0.06);
+  /* Exact Hamish Williams dark palette */
+  --bg: oklch(17.76% 0 0); /* #111111 deep charcoal */
+  --bg-secondary: oklch(21.78% 0 0);
+  --text: oklch(100% 0 0);
+  --textTitle: var(--text);
+  --textBody: color-mix(in lab, var(--text) 80%, transparent);
+  --textLight: color-mix(in lab, var(--text) 60%, transparent);
+  --text-muted: var(--textBody);
+  --text-faint: var(--textLight);
+  --primary: oklch(84.42% 0.19 202.24); /* #00e5ff cyan */
+  --accent: oklch(84.42% 0.19 202.24);
+  --accent-glow: rgba(0, 229, 255, 0.28);
+  --border: color-mix(in lab, var(--text) 16%, transparent);
+  --border-subtle: color-mix(in lab, var(--text) 8%, transparent);
 
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Gotham', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color-scheme: dark;
 }
 
 html.light,
 [data-theme='light'] {
-  --bg: #f4f5f7;
-  --bg-secondary: #ffffff;
-  --text: #111215;
-  --text-muted: rgba(17, 18, 21, 0.72);
-  --text-faint: rgba(17, 18, 21, 0.45);
-  --accent: #00a8cc;
-  --accent-glow: rgba(0, 168, 204, 0.25);
-  --border: rgba(0, 0, 0, 0.1);
-  --border-subtle: rgba(0, 0, 0, 0.05);
+  /* Exact Hamish Williams light palette */
+  --bg: oklch(96.12% 0 0); /* #f5f6f8 crisp warm neutral */
+  --bg-secondary: oklch(100% 0 0);
+  --text: oklch(0% 0 0);
+  --textTitle: color-mix(in lab, var(--text) 90%, transparent);
+  --textBody: color-mix(in lab, var(--text) 75%, transparent);
+  --textLight: color-mix(in lab, var(--text) 55%, transparent);
+  --text-muted: var(--textBody);
+  --text-faint: var(--textLight);
+  --primary: oklch(0% 0 0);
+  --accent: oklch(84.42% 0.19 202.24);
+  --accent-glow: rgba(0, 229, 255, 0.2);
+  --border: color-mix(in lab, var(--text) 14%, transparent);
+  --border-subtle: color-mix(in lab, var(--text) 6%, transparent);
 
   color-scheme: light;
 }
@@ -42,6 +84,9 @@ body {
   color: var(--text);
   overflow-x: hidden;
   transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Gotham', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom modern scrollbar */
@@ -62,6 +107,12 @@ body {
   background: var(--accent);
 }
 
+/* Katakana decoder font */
+.font-katakana {
+  font-family: 'IPA Gothic', 'Gotham', sans-serif;
+}
+
+/* Cyan block wipe animation for role switching */
 @keyframes cyanBlockWipe {
   0% {
     left: 0%;
@@ -76,4 +127,3 @@ body {
     width: 0%;
   }
 }
-
