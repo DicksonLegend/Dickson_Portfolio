@@ -13,7 +13,7 @@ const RENDER_MODE: 'CANVAS_SEQUENCE' | 'THREE_GLTF' = 'CANVAS_SEQUENCE'
 const TOTAL_FRAMES = 90
 const FRAME_PATH_PREFIX = '/frames/book/frame_'
 
-// 15 Curated Skills from Dickson's AI & Engineering Stack with Organic Coordinates
+// 15 Curated Skills from Dickson's AI & Engineering Stack with Organic Coordinates strictly ABOVE the book
 export interface SkillItem {
   name: string
   src: string
@@ -28,26 +28,26 @@ export interface SkillItem {
 }
 
 const SKILL_ITEMS: SkillItem[] = [
-  // High Floating Tier (Y: 22% - 28%)
-  { name: 'PyTorch', src: '/icons/pytorch.svg', tag: 'Deep Learning & Neural Networks', color: '#ee4c2c', x: 48, y: 22, mobileX: 48, mobileY: 23 },
-  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'High-Throughput APIs', color: '#009688', x: 63, y: 20, mobileX: 72, mobileY: 21 },
-  { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6', x: 77, y: 23, mobileX: 88, mobileY: 26 },
-  { name: 'Git', src: '/icons/git.svg', tag: 'CI/CD & GitOps', color: '#f34f29', x: 90, y: 26, mobileX: 86, mobileY: 34 },
+  // High Floating Tier (Y: 16% - 24%) - Framing upper right & center
+  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'High-Throughput APIs', color: '#009688', x: 50, y: 16, mobileX: 50, mobileY: 20 },
+  { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6', x: 65, y: 18, mobileX: 74, mobileY: 21 },
+  { name: 'Git', src: '/icons/git.svg', tag: 'CI/CD & GitOps', color: '#f34f29', x: 80, y: 17, mobileX: 86, mobileY: 26 },
+  { name: 'Linux', src: '/icons/linux.svg', tag: 'UNIX Kernels & Systems', color: '#fcc624', x: 92, y: 22, mobileX: 88, mobileY: 33 },
 
-  // Mid-High Floating Tier (Y: 30% - 37%)
-  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / Machine Learning', color: '#3776ab', x: 13, y: 31, mobileX: 14, mobileY: 25 },
-  { name: 'Scikit-Learn', src: '/icons/scikitlearn.svg', tag: 'Statistical ML Models', color: '#f89939', x: 37, y: 31, mobileX: 30, mobileY: 24 },
-  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent Orchestration', color: '#00e5ff', x: 53, y: 33, mobileX: 52, mobileY: 32 },
-  { name: 'React', src: '/icons/react.svg', tag: 'Reactive Frontend Systems', color: '#61dafb', x: 69, y: 32, mobileX: 70, mobileY: 33 },
-  { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Compute & Deployments', color: '#ff9900', x: 84, y: 36, mobileX: 84, mobileY: 42 },
+  // Mid-High Tier (Y: 26% - 34%) - Spanning across the middle open sky
+  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / Machine Learning', color: '#3776ab', x: 13, y: 31, mobileX: 14, mobileY: 23 },
+  { name: 'PyTorch', src: '/icons/pytorch.svg', tag: 'Deep Learning & Neural Networks', color: '#ee4c2c', x: 27, y: 27, mobileX: 32, mobileY: 22 },
+  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent Orchestration', color: '#00e5ff', x: 42, y: 26, mobileX: 52, mobileY: 28 },
+  { name: 'React', src: '/icons/react.svg', tag: 'Reactive Frontend Systems', color: '#61dafb', x: 57, y: 29, mobileX: 70, mobileY: 28 },
+  { name: 'Scikit-Learn', src: '/icons/scikitlearn.svg', tag: 'Statistical ML Models', color: '#f89939', x: 72, y: 30, mobileX: 30, mobileY: 31 },
+  { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Compute & Deployments', color: '#ff9900', x: 86, y: 33, mobileX: 84, mobileY: 39 },
 
-  // Lower Floating Tier above open pages (Y: 42% - 49%)
-  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Model Architecture & Serving', color: '#ff6f00', x: 19, y: 43, mobileX: 15, mobileY: 36 },
-  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248', x: 31, y: 44, mobileX: 32, mobileY: 35 },
-  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization & Isolation', color: '#2496ed', x: 44, y: 45, mobileX: 36, mobileY: 44 },
-  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational & Structured DB', color: '#336791', x: 58, y: 46, mobileX: 54, mobileY: 43 },
-  { name: 'Linux', src: '/icons/linux.svg', tag: 'UNIX Kernels & Systems', color: '#fcc624', x: 72, y: 45, mobileX: 68, mobileY: 44 },
-  { name: 'TailwindCSS', src: '/icons/tailwindcss.svg', tag: 'Design Systems & Tokens', color: '#06b6d4', x: 87, y: 48, mobileX: 85, mobileY: 51 },
+  // Lower Hovering Tier (Y: 39% - 45%) - Strictly ABOVE the book pages (pages start at Y >= 56%)
+  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Model Architecture & Serving', color: '#ff6f00', x: 18, y: 43, mobileX: 15, mobileY: 33 },
+  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248', x: 33, y: 41, mobileX: 34, mobileY: 39 },
+  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization & Isolation', color: '#2496ed', x: 48, y: 40, mobileX: 50, mobileY: 37 },
+  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational & Structured DB', color: '#336791', x: 63, y: 42, mobileX: 66, mobileY: 38 },
+  { name: 'TailwindCSS', src: '/icons/tailwindcss.svg', tag: 'Design Systems & Tokens', color: '#06b6d4', x: 78, y: 44, mobileX: 82, mobileY: 46 },
 ]
 
 // =========================================================================
@@ -121,7 +121,7 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
     ctx.fillStyle = '#0a1315'
     ctx.fillRect(0, 0, displayWidth, displayHeight)
 
-    // Fit image keeping 16:9 aspect ratio
+    // Fit image keeping 16:9 aspect ratio, scaled to 0.75 height so upper half is clear
     const imgAspect = img.naturalWidth / img.naturalHeight
     const canvasAspect = displayWidth / displayHeight
 
@@ -129,24 +129,28 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
     let drawH: number
 
     if (canvasAspect > imgAspect) {
-      // Screen is wider than 16:9
-      drawH = displayHeight * (isMobile ? 1.05 : 0.98)
+      // Screen is wider than 16:9 (Desktop)
+      drawH = displayHeight * (isMobile ? 0.85 : 0.74)
       drawW = drawH * imgAspect
     } else {
-      // Screen is narrower than 16:9 (mobile portrait)
-      drawW = displayWidth * (isMobile ? 1.15 : 1.05)
+      // Screen is narrower than 16:9 (Mobile portrait)
+      drawW = displayWidth * (isMobile ? 1.05 : 0.92)
       drawH = drawW / imgAspect
+      if (drawH > displayHeight * 0.74) {
+        drawH = displayHeight * 0.74
+        drawW = drawH * imgAspect
+      }
     }
 
     const drawX = (displayWidth - drawW) / 2
-    // Place book lower down so the upper half is open for floating skills
-    const drawY = (displayHeight - drawH) / 2 + (isMobile ? 75 : 115)
+    // Place book lower down near the bottom of the viewport
+    const drawY = displayHeight - drawH + (isMobile ? 15 : 25)
 
     ctx.drawImage(img, drawX, drawY, drawW, drawH)
 
     // Internal organic radial feather vignette to dissolve all rectangular boundaries
     const bookCenterX = displayWidth / 2
-    const bookCenterY = drawY + drawH * 0.58
+    const bookCenterY = drawY + drawH * 0.60
     const innerRadius = drawW * 0.16
     const outerRadius = drawW * 0.52
 
@@ -235,8 +239,8 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
       <div
         className="w-full h-full"
         style={{
-          maskImage: 'radial-gradient(ellipse 72% 64% at 50% 68%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 72% 64% at 50% 68%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
+          maskImage: 'radial-gradient(ellipse 75% 65% at 50% 78%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 78%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
         }}
       >
         <canvas
@@ -251,10 +255,10 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
         ref={lightGlowRef}
         className="absolute left-1/2 pointer-events-none transition-opacity duration-300"
         style={{
-          top: isMobile ? '68%' : '71%',
+          top: isMobile ? '76%' : '78%',
           transform: 'translate(-50%, -50%)',
-          width: isMobile ? '320px' : '620px',
-          height: isMobile ? '200px' : '340px',
+          width: isMobile ? '300px' : '560px',
+          height: isMobile ? '180px' : '300px',
           background: 'radial-gradient(ellipse at center, rgba(240, 169, 58, 0.45) 0%, rgba(63, 174, 142, 0.2) 40%, rgba(10, 19, 21, 0) 75%)',
           filter: 'blur(35px)',
           opacity: 0,
@@ -266,10 +270,10 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
         ref={spineCoreRef}
         className="absolute left-1/2 pointer-events-none transition-all duration-300"
         style={{
-          top: isMobile ? '68%' : '71%',
+          top: isMobile ? '76%' : '78%',
           transform: 'translate(-50%, -50%) scale(0.2)',
-          width: isMobile ? '90px' : '160px',
-          height: isMobile ? '60px' : '95px',
+          width: isMobile ? '80px' : '150px',
+          height: isMobile ? '50px' : '85px',
           background: 'radial-gradient(ellipse at center, #ffffff 0%, #f0a93a 45%, rgba(240, 169, 58, 0) 80%)',
           filter: 'blur(12px)',
           opacity: 0,
