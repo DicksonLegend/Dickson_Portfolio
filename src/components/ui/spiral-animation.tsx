@@ -455,10 +455,12 @@ export const SpiralAnimation = forwardRef<SpiralAnimationRef, SpiralAnimationPro
     
     // Store callbacks in refs so re-renders of parent never trigger effect cleanup
     const onCompleteRef = useRef(onComplete)
-    onCompleteRef.current = onComplete
-
     const onProgressRef = useRef(onProgress)
-    onProgressRef.current = onProgress
+
+    useEffect(() => {
+      onCompleteRef.current = onComplete
+      onProgressRef.current = onProgress
+    })
 
     const [dimensions, setDimensions] = useState({
       width: typeof window !== 'undefined' ? window.innerWidth : 1920,
