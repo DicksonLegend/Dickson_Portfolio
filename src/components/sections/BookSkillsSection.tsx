@@ -13,7 +13,7 @@ const RENDER_MODE: 'CANVAS_SEQUENCE' | 'THREE_GLTF' = 'CANVAS_SEQUENCE'
 const TOTAL_FRAMES = 90
 const FRAME_PATH_PREFIX = '/frames/book/frame_'
 
-// 15 Curated Skills from Dickson's AI & Engineering Stack with Organic Coordinates
+// 18 Curated Skills from Dickson's AI & Engineering Stack with Organic Coordinates
 export interface SkillItem {
   name: string
   src: string
@@ -28,25 +28,28 @@ export interface SkillItem {
 }
 
 const SKILL_ITEMS: SkillItem[] = [
-  // High Floating Tier (Y: 22% - 28%)
-  { name: 'PyTorch', src: '/icons/pytorch.svg', tag: 'Deep Learning & Neural Networks', color: '#ee4c2c', x: 48, y: 22, mobileX: 48, mobileY: 23 },
-  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'High-Throughput APIs', color: '#009688', x: 63, y: 20, mobileX: 72, mobileY: 21 },
+  // High Floating Tier (Y: 19% - 26%) - Framing the upper arched canopy
+  { name: 'OpenAI', src: '/icons/openai.svg', tag: 'LLMs & Neural Embeddings', color: '#10a37f', x: 23, y: 22, mobileX: 22, mobileY: 18 },
+  { name: 'Next.js', src: '/icons/nextjs.svg', tag: 'Fullstack App Architecture', color: '#ffffff', x: 35, y: 19, mobileX: 40, mobileY: 19 },
+  { name: 'PyTorch', src: '/icons/pytorch.svg', tag: 'Deep Learning & Neural Networks', color: '#ee4c2c', x: 48, y: 22, mobileX: 58, mobileY: 21 },
+  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'High-Throughput APIs', color: '#009688', x: 63, y: 20, mobileX: 76, mobileY: 20 },
   { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6', x: 77, y: 23, mobileX: 88, mobileY: 26 },
-  { name: 'Git', src: '/icons/git.svg', tag: 'CI/CD & GitOps', color: '#f34f29', x: 90, y: 26, mobileX: 86, mobileY: 34 },
+  { name: 'Git', src: '/icons/git.svg', tag: 'CI/CD & GitOps', color: '#f34f29', x: 90, y: 26, mobileX: 86, mobileY: 35 },
 
-  // Mid-High Floating Tier (Y: 30% - 37%)
-  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / Machine Learning', color: '#3776ab', x: 13, y: 31, mobileX: 14, mobileY: 25 },
-  { name: 'Scikit-Learn', src: '/icons/scikitlearn.svg', tag: 'Statistical ML Models', color: '#f89939', x: 37, y: 31, mobileX: 30, mobileY: 24 },
-  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent Orchestration', color: '#00e5ff', x: 53, y: 33, mobileX: 52, mobileY: 32 },
-  { name: 'React', src: '/icons/react.svg', tag: 'Reactive Frontend Systems', color: '#61dafb', x: 69, y: 32, mobileX: 70, mobileY: 33 },
+  // Mid-High Floating Tier (Y: 30% - 38%) - Spanning across the middle expanse
+  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / Machine Learning', color: '#3776ab', x: 13, y: 31, mobileX: 14, mobileY: 26 },
+  { name: 'Scikit-Learn', src: '/icons/scikitlearn.svg', tag: 'Statistical ML Models', color: '#f89939', x: 37, y: 31, mobileX: 32, mobileY: 26 },
+  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent Orchestration', color: '#00e5ff', x: 53, y: 33, mobileX: 52, mobileY: 30 },
+  { name: 'Redis', src: '/icons/redis.svg', tag: 'In-Memory Cache & Vector DB', color: '#dc382d', x: 62, y: 38, mobileX: 52, mobileY: 38 },
+  { name: 'React', src: '/icons/react.svg', tag: 'Reactive Frontend Systems', color: '#61dafb', x: 70, y: 31, mobileX: 70, mobileY: 31 },
   { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Compute & Deployments', color: '#ff9900', x: 84, y: 36, mobileX: 84, mobileY: 42 },
 
-  // Lower Floating Tier above open pages (Y: 42% - 49%)
-  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Model Architecture & Serving', color: '#ff6f00', x: 19, y: 43, mobileX: 15, mobileY: 36 },
-  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248', x: 31, y: 44, mobileX: 32, mobileY: 35 },
-  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization & Isolation', color: '#2496ed', x: 44, y: 45, mobileX: 36, mobileY: 44 },
-  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational & Structured DB', color: '#336791', x: 58, y: 46, mobileX: 54, mobileY: 43 },
-  { name: 'Linux', src: '/icons/linux.svg', tag: 'UNIX Kernels & Systems', color: '#fcc624', x: 72, y: 45, mobileX: 68, mobileY: 44 },
+  // Lower Floating Tier above open pages (Y: 43% - 49%)
+  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Model Architecture & Serving', color: '#ff6f00', x: 19, y: 43, mobileX: 16, mobileY: 36 },
+  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248', x: 31, y: 44, mobileX: 34, mobileY: 36 },
+  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization & Isolation', color: '#2496ed', x: 44, y: 45, mobileX: 34, mobileY: 44 },
+  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational & Structured DB', color: '#336791', x: 57, y: 46, mobileX: 52, mobileY: 45 },
+  { name: 'Linux', src: '/icons/linux.svg', tag: 'UNIX Kernels & Systems', color: '#fcc624', x: 72, y: 46, mobileX: 68, mobileY: 44 },
   { name: 'TailwindCSS', src: '/icons/tailwindcss.svg', tag: 'Design Systems & Tokens', color: '#06b6d4', x: 87, y: 48, mobileX: 85, mobileY: 51 },
 ]
 
