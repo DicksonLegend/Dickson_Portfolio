@@ -33,7 +33,7 @@ export const Hero: React.FC = () => {
       <DisplacementMesh />
 
       {/* 2. Left Content Container (Exact Hamish Williams hierarchy & spacing) */}
-      <div className="relative z-10 max-w-4xl pt-16 pb-20 md:py-24">
+      <div className="relative z-10 max-w-5xl lg:max-w-6xl pt-16 pb-20 md:py-24">
         {/* Name: Scaled up to 1.5rem (24px) with 0.3em letter spacing matching hamishw.com */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -55,7 +55,7 @@ export const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex items-center"
           >
-            <h2 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-[1.08]">
+            <h2 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-[1.08] whitespace-nowrap">
               AI Engineer
             </h2>
 
@@ -72,24 +72,24 @@ export const Hero: React.FC = () => {
           </motion.div>
 
           {/* Line 2: Rotating Disciplines with Matching Giant Font & Cyan Mask Wipe */}
-          <div className="flex items-center gap-3 md:gap-4 overflow-hidden h-[60px] sm:h-[84px] lg:h-[104px]">
-            <span className="text-4xl sm:text-6xl lg:text-7xl font-light text-[var(--textLight)] opacity-50 select-none">
+          <div className="flex items-center gap-3 md:gap-4 min-h-[52px] sm:min-h-[76px] md:min-h-[88px] xl:min-h-[104px] whitespace-nowrap overflow-visible">
+            <span className="text-3xl sm:text-5xl md:text-6xl xl:text-7xl font-light text-[var(--textLight)] opacity-50 select-none">
               +
             </span>
 
-            <div className="relative">
+            <div className="relative inline-block whitespace-nowrap">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentRole}
-                  initial={{ opacity: 0, y: 14 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -14 }}
+                  exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-none"
+                  className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-none whitespace-nowrap"
                 >
                   <DecoderText
                     text={currentRole}
-                    speed={26}
+                    speed={24}
                     showBlockMask={true}
                     className="font-bold"
                   />

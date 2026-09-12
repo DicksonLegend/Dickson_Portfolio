@@ -96,17 +96,17 @@ export const DecoderText: React.FC<DecoderTextProps> = ({
   }, [text, startDelay, speed, showBlockMask])
 
   return (
-    <span className={`relative inline-block ${className}`}>
+    <span className={`relative inline-block whitespace-nowrap ${className}`}>
       {/* Cyan block mask wipe overlay */}
       {showBlockMask && isWiping && (
         <span
-          className="absolute inset-y-0 left-0 bg-[#00e5ff] z-10 pointer-events-none animate-blockWipe"
+          className="absolute inset-0 bg-[var(--accent)] z-10 pointer-events-none"
           style={{
-            animation: 'cyanBlockWipe 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards',
+            animation: 'cyanBlockWipe 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
           }}
         />
       )}
-      <span className="relative z-0 font-mono tracking-wider">{displayText}</span>
+      <span className="relative z-0 whitespace-nowrap">{displayText}</span>
     </span>
   )
 }
