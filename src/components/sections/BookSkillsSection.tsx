@@ -308,7 +308,7 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
 
       // Origin of skills spawn: right at the glowing book spine
       const originX = 50
-      const originY = isMobile ? 68 : 71
+      const originY = isMobile ? 76 : 78
 
       SKILL_ITEMS.forEach((skill, i) => {
         const el = iconRefs.current[i]
