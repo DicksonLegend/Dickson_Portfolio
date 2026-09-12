@@ -13,22 +13,45 @@ const RENDER_MODE: 'CANVAS_SEQUENCE' | 'THREE_GLTF' = 'CANVAS_SEQUENCE'
 const TOTAL_FRAMES = 90
 const FRAME_PATH_PREFIX = '/frames/book/frame_'
 
-// Skill definitions from Dickson's AI & Software engineering stack
-const SKILLS = [
-  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / ML', color: '#3776ab' },
-  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'Async Microservices', color: '#009688' },
-  { name: 'React', src: '/icons/react.svg', tag: 'Frontend Systems', color: '#61dafb' },
-  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational DB', color: '#336791' },
-  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248' },
-  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization', color: '#2496ed' },
-  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Deep Learning', color: '#ff6f00' },
-  { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Infrastructure', color: '#ff9900' },
-  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent', color: '#00e5ff' },
-  { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6' },
+// 15 Curated Skills from Dickson's AI & Engineering Stack with Organic Coordinates
+export interface SkillItem {
+  name: string
+  src: string
+  tag: string
+  color: string
+  // Desktop target coordinates (% of container)
+  x: number
+  y: number
+  // Mobile target coordinates (% of container)
+  mobileX: number
+  mobileY: number
+}
+
+const SKILL_ITEMS: SkillItem[] = [
+  // High Floating Tier (Y: 22% - 28%)
+  { name: 'PyTorch', src: '/icons/pytorch.svg', tag: 'Deep Learning & Neural Networks', color: '#ee4c2c', x: 48, y: 22, mobileX: 48, mobileY: 23 },
+  { name: 'FastAPI', src: '/icons/fastapi.svg', tag: 'High-Throughput APIs', color: '#009688', x: 63, y: 20, mobileX: 72, mobileY: 21 },
+  { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6', x: 77, y: 23, mobileX: 88, mobileY: 26 },
+  { name: 'Git', src: '/icons/git.svg', tag: 'CI/CD & GitOps', color: '#f34f29', x: 90, y: 26, mobileX: 86, mobileY: 34 },
+
+  // Mid-High Floating Tier (Y: 30% - 37%)
+  { name: 'Python', src: '/icons/python.svg', tag: 'Core AI / Machine Learning', color: '#3776ab', x: 13, y: 31, mobileX: 14, mobileY: 25 },
+  { name: 'Scikit-Learn', src: '/icons/scikitlearn.svg', tag: 'Statistical ML Models', color: '#f89939', x: 37, y: 31, mobileX: 30, mobileY: 24 },
+  { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent Orchestration', color: '#00e5ff', x: 53, y: 33, mobileX: 52, mobileY: 32 },
+  { name: 'React', src: '/icons/react.svg', tag: 'Reactive Frontend Systems', color: '#61dafb', x: 69, y: 32, mobileX: 70, mobileY: 33 },
+  { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Compute & Deployments', color: '#ff9900', x: 84, y: 36, mobileX: 84, mobileY: 42 },
+
+  // Lower Floating Tier above open pages (Y: 42% - 49%)
+  { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Model Architecture & Serving', color: '#ff6f00', x: 19, y: 43, mobileX: 15, mobileY: 36 },
+  { name: 'MongoDB', src: '/icons/mongodb.svg', tag: 'Vector Store & NoSQL', color: '#47a248', x: 31, y: 44, mobileX: 32, mobileY: 35 },
+  { name: 'Docker', src: '/icons/docker.svg', tag: 'Containerization & Isolation', color: '#2496ed', x: 44, y: 45, mobileX: 36, mobileY: 44 },
+  { name: 'PostgreSQL', src: '/icons/postgresql.svg', tag: 'Relational & Structured DB', color: '#336791', x: 58, y: 46, mobileX: 54, mobileY: 43 },
+  { name: 'Linux', src: '/icons/linux.svg', tag: 'UNIX Kernels & Systems', color: '#fcc624', x: 72, y: 45, mobileX: 68, mobileY: 44 },
+  { name: 'TailwindCSS', src: '/icons/tailwindcss.svg', tag: 'Design Systems & Tokens', color: '#06b6d4', x: 87, y: 48, mobileX: 85, mobileY: 51 },
 ]
 
 // =========================================================================
-// SECTION A: APPLE-STYLE CANVAS IMAGE SEQUENCE (Zero Lag, 120 FPS)
+// SECTION A: APPLE-STYLE CANVAS SEQUENCE (FEATHERED & ORGANIC BLENDING)
 // =========================================================================
 
 interface CanvasBookSequenceProps {
@@ -42,8 +65,10 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
   const [imagesLoaded, setImagesLoaded] = useState(false)
   const currentFrameRef = useRef<number>(0)
   const animFrameRef = useRef<number>(0)
+  const lightGlowRef = useRef<HTMLDivElement>(null)
+  const spineCoreRef = useRef<HTMLDivElement>(null)
 
-  // Preload all 90 WebP frames into browser memory
+  // Preload all 90 WebP frames into memory
   useEffect(() => {
     let isCancelled = false
     const images: HTMLImageElement[] = []
@@ -57,7 +82,6 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
         if (isCancelled) return
         loadedCount++
         if (loadedCount >= Math.min(15, TOTAL_FRAMES)) {
-          // Render initial frame as soon as first batch is ready
           setImagesLoaded(true)
         }
       }
@@ -71,7 +95,7 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
     }
   }, [])
 
-  // Draw current frame to canvas with high-DPI crisp scaling
+  // Draw current frame to canvas with organic vignette and lower placement
   const renderFrame = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -93,11 +117,11 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
     ctx.save()
     ctx.scale(dpr, dpr)
 
-    // Clear background
+    // Clear with dark teal page background
     ctx.fillStyle = '#0a1315'
     ctx.fillRect(0, 0, displayWidth, displayHeight)
 
-    // Fit image keeping 16:9 aspect ratio centered
+    // Fit image keeping 16:9 aspect ratio
     const imgAspect = img.naturalWidth / img.naturalHeight
     const canvasAspect = displayWidth / displayHeight
 
@@ -106,48 +130,54 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
 
     if (canvasAspect > imgAspect) {
       // Screen is wider than 16:9
-      drawH = displayHeight * (isMobile ? 1.05 : 1.0)
+      drawH = displayHeight * (isMobile ? 1.05 : 0.98)
       drawW = drawH * imgAspect
     } else {
-      // Screen is narrower than 16:9 (mobile portrait / standard)
+      // Screen is narrower than 16:9 (mobile portrait)
       drawW = displayWidth * (isMobile ? 1.15 : 1.05)
       drawH = drawW / imgAspect
     }
 
     const drawX = (displayWidth - drawW) / 2
-    // Place book centered, slightly weighted toward bottom half so icons float above
-    const drawY = (displayHeight - drawH) / 2 + (isMobile ? 25 : 40)
+    // Place book lower down so the upper half is open for floating skills
+    const drawY = (displayHeight - drawH) / 2 + (isMobile ? 75 : 115)
 
     ctx.drawImage(img, drawX, drawY, drawW, drawH)
 
-    // Soft peripheral vignette to seamlessly blend edges into dark teal background
-    const gradient = ctx.createRadialGradient(
-      displayWidth / 2,
-      drawY + drawH * 0.55,
-      drawW * 0.2,
-      displayWidth / 2,
-      drawY + drawH * 0.55,
-      drawW * 0.58
-    )
-    gradient.addColorStop(0, 'rgba(10, 19, 21, 0)')
-    gradient.addColorStop(0.85, 'rgba(10, 19, 21, 0.45)')
-    gradient.addColorStop(1, 'rgba(10, 19, 21, 1)')
+    // Internal organic radial feather vignette to dissolve all rectangular boundaries
+    const bookCenterX = displayWidth / 2
+    const bookCenterY = drawY + drawH * 0.58
+    const innerRadius = drawW * 0.16
+    const outerRadius = drawW * 0.52
 
-    ctx.fillStyle = gradient
+    const vignette = ctx.createRadialGradient(
+      bookCenterX,
+      bookCenterY,
+      innerRadius,
+      bookCenterX,
+      bookCenterY,
+      outerRadius
+    )
+    vignette.addColorStop(0, 'rgba(10, 19, 21, 0)')
+    vignette.addColorStop(0.55, 'rgba(10, 19, 21, 0.18)')
+    vignette.addColorStop(0.85, 'rgba(10, 19, 21, 0.75)')
+    vignette.addColorStop(1, 'rgba(10, 19, 21, 1)')
+
+    ctx.fillStyle = vignette
     ctx.fillRect(0, 0, displayWidth, displayHeight)
 
     ctx.restore()
   }, [isMobile])
 
-  // Continuous animation loop synchronized with scroll progress
+  // Continuous animation loop synchronized with scroll progress & light burst
   useEffect(() => {
     if (!imagesLoaded) return
 
     const updateLoop = () => {
       const p = scrollProgress.current
 
-      // First 50% of scroll (0.0 -> 0.5) controls 100% of the book opening sequence (frame 0 to 89)
-      const sequenceProgress = Math.min(Math.max(p / 0.5, 0), 1)
+      // First 48% of scroll controls 100% of book opening (frame 0 to 89)
+      const sequenceProgress = Math.min(Math.max(p / 0.48, 0), 1)
       const targetFrame = Math.min(
         Math.floor(sequenceProgress * (TOTAL_FRAMES - 1)),
         TOTAL_FRAMES - 1
@@ -158,10 +188,27 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
         renderFrame(targetFrame)
       }
 
+      // Golden light burst surge from spine as book reaches full open (p: 0.44 -> 0.60)
+      if (lightGlowRef.current && spineCoreRef.current) {
+        if (p < 0.42) {
+          lightGlowRef.current.style.opacity = '0'
+          spineCoreRef.current.style.opacity = '0'
+          spineCoreRef.current.style.transform = 'translate(-50%, -50%) scale(0.2)'
+        } else {
+          // Surge light burst to peak at 0.52, then settle into warm pulsing aura
+          const flareProgress = THREE.MathUtils.clamp((p - 0.42) / 0.12, 0, 1)
+          const peakFlash = p >= 0.48 && p <= 0.62 ? 1.0 : THREE.MathUtils.clamp(1 - (p - 0.62) / 0.25, 0.65, 1)
+
+          lightGlowRef.current.style.opacity = String((flareProgress * peakFlash).toFixed(3))
+          spineCoreRef.current.style.opacity = String((flareProgress * peakFlash).toFixed(3))
+          const coreScale = 0.5 + flareProgress * (p <= 0.55 ? 1.3 : 0.8)
+          spineCoreRef.current.style.transform = `translate(-50%, -50%) scale(${coreScale.toFixed(3)})`
+        }
+      }
+
       animFrameRef.current = requestAnimationFrame(updateLoop)
     }
 
-    // Initial paint
     renderFrame(0)
     animFrameRef.current = requestAnimationFrame(updateLoop)
 
@@ -181,22 +228,51 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
 
   return (
     <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden select-none">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full block"
-        style={{ background: '#0a1315' }}
+      {/* 
+        The Canvas container with CSS elliptical mask:
+        Feathers outer edges completely to 0% opacity on all 4 borders, eliminating any square box.
+      */}
+      <div
+        className="w-full h-full"
+        style={{
+          maskImage: 'radial-gradient(ellipse 72% 64% at 50% 68%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 72% 64% at 50% 68%, black 45%, rgba(0, 0, 0, 0.7) 65%, rgba(0, 0, 0, 0.15) 85%, transparent 100%)',
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full block"
+          style={{ background: '#0a1315' }}
+        />
+      </div>
+
+      {/* Radiant Amber & Jade Aura erupting from open book spine */}
+      <div
+        ref={lightGlowRef}
+        className="absolute left-1/2 pointer-events-none transition-opacity duration-300"
+        style={{
+          top: isMobile ? '68%' : '71%',
+          transform: 'translate(-50%, -50%)',
+          width: isMobile ? '320px' : '620px',
+          height: isMobile ? '200px' : '340px',
+          background: 'radial-gradient(ellipse at center, rgba(240, 169, 58, 0.45) 0%, rgba(63, 174, 142, 0.2) 40%, rgba(10, 19, 21, 0) 75%)',
+          filter: 'blur(35px)',
+          opacity: 0,
+        }}
       />
 
-      {/* Radiant golden light flare behind the open pages */}
+      {/* Blinding Golden Heart Light Core at the spine */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-500"
+        ref={spineCoreRef}
+        className="absolute left-1/2 pointer-events-none transition-all duration-300"
         style={{
-          top: isMobile ? '58%' : '60%',
-          width: isMobile ? '300px' : '520px',
-          height: isMobile ? '180px' : '280px',
-          background: 'radial-gradient(ellipse at center, rgba(240, 169, 58, 0.28) 0%, rgba(63, 174, 142, 0.12) 45%, transparent 75%)',
-          filter: 'blur(35px)',
-          opacity: THREE.MathUtils.clamp((scrollProgress.current - 0.25) / 0.25, 0, 1),
+          top: isMobile ? '68%' : '71%',
+          transform: 'translate(-50%, -50%) scale(0.2)',
+          width: isMobile ? '90px' : '160px',
+          height: isMobile ? '60px' : '95px',
+          background: 'radial-gradient(ellipse at center, #ffffff 0%, #f0a93a 45%, rgba(240, 169, 58, 0) 80%)',
+          filter: 'blur(12px)',
+          opacity: 0,
         }}
       />
     </div>
@@ -204,7 +280,7 @@ function CanvasBookSequence({ scrollProgress, isMobile }: CanvasBookSequenceProp
 }
 
 // =========================================================================
-// FLOATING TECH STACK ICONS FOR CANVAS SEQUENCE (Zero-Lag DOM Overlay)
+// FLOATING TECH STACK ICONS (ORGANIC CONSTELLATION & STAGGERED SPAWN)
 // =========================================================================
 
 interface CanvasFloatingIconsProps {
@@ -215,26 +291,9 @@ interface CanvasFloatingIconsProps {
 function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const iconRefs = useRef<(HTMLDivElement | null)[]>([])
-  const total = SKILLS.length
+  const total = SKILL_ITEMS.length
 
-  // Arc coordinates scattered in a constellation above the open book
-  const arcPositions = useMemo(() => {
-    return SKILLS.map((_, i) => {
-      const t = (i / (total - 1) - 0.5) * 2 // -1.0 to +1.0
-      const angle = t * 0.92 // +/- 52 degrees
-
-      const radiusX = isMobile ? 38 : 36 // % of viewport width
-      const radiusY = isMobile ? 12 : 18 // % of viewport height
-
-      // Center above book
-      const targetX = 50 + Math.sin(angle) * radiusX
-      const targetY = (isMobile ? 37 : 33) - Math.cos(angle) * radiusY
-
-      return { targetX, targetY, t }
-    })
-  }, [total, isMobile])
-
-  // Continuous animation loop for burst & zero-gravity floating
+  // Organic continuous floating physics loop
   useEffect(() => {
     let animId: number
     const startTime = performance.now()
@@ -243,19 +302,19 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
       const p = scrollProgress.current
       const elapsed = (performance.now() - startTime) / 1000
 
-      // Origin inside the open book center
+      // Origin of skills spawn: right at the glowing book spine
       const originX = 50
-      const originY = isMobile ? 62 : 64
+      const originY = isMobile ? 68 : 71
 
-      arcPositions.forEach((pos, i) => {
+      SKILL_ITEMS.forEach((skill, i) => {
         const el = iconRefs.current[i]
         if (!el) return
 
-        // Stagger trigger between 0.48 and 0.72
-        const startThreshold = 0.48 + (i / total) * 0.22
-        const rawProgress = THREE.MathUtils.clamp((p - startThreshold) / 0.26, 0, 1)
+        // Stagger spawn: Trigger ONLY AFTER light burst begins (p: 0.50 -> 0.72)
+        const startThreshold = 0.50 + (i / total) * 0.20
+        const rawProgress = THREE.MathUtils.clamp((p - startThreshold) / 0.24, 0, 1)
 
-        // Snappy cubic ease-out for energetic burst
+        // Snappy cubic ease-out for energetic burst outward
         const burstProgress = 1 - Math.pow(1 - rawProgress, 3)
 
         if (burstProgress <= 0.005) {
@@ -265,22 +324,26 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
           return
         }
 
-        // Current coordinates
-        const curX = THREE.MathUtils.lerp(originX, pos.targetX, burstProgress)
-        const curY = THREE.MathUtils.lerp(originY, pos.targetY, burstProgress)
+        // Target coordinates from organic scattered constellation
+        const targetX = isMobile ? skill.mobileX : skill.x
+        const targetY = isMobile ? skill.mobileY : skill.y
 
-        // Zero-gravity harmonic hovering when deployed
-        const isHovering = burstProgress > 0.75
-        const bobY = isHovering ? Math.sin(elapsed * 2.2 + i * 0.85) * 6 : 0
-        const bobX = isHovering ? Math.cos(elapsed * 1.6 + i * 0.7) * 3 : 0
-        const bobRot = isHovering ? Math.sin(elapsed * 1.8 + i) * 2.5 : 0
+        // Interpolate along burst trajectory
+        const curX = THREE.MathUtils.lerp(originX, targetX, burstProgress)
+        const curY = THREE.MathUtils.lerp(originY, targetY, burstProgress)
+
+        // Zero-gravity harmonic hovering with independent frequencies
+        const isHovering = burstProgress > 0.8
+        const bobY = isHovering ? Math.sin(elapsed * 2.0 + i * 0.8) * 6 : 0
+        const bobX = isHovering ? Math.cos(elapsed * 1.5 + i * 0.6) * 3.5 : 0
+        const bobRot = isHovering ? Math.sin(elapsed * 1.7 + i) * 2.2 : 0
 
         el.style.visibility = 'visible'
-        el.style.opacity = String(Math.min(burstProgress * 2.0, 1).toFixed(3))
+        el.style.opacity = String(Math.min(burstProgress * 2.2, 1).toFixed(3))
         el.style.left = `${curX}%`
         el.style.top = `${curY}%`
         el.style.transform = `translate(-50%, -50%) translate3d(${bobX.toFixed(1)}px, ${bobY.toFixed(1)}px, 0) scale(${burstProgress.toFixed(3)}) rotate(${bobRot.toFixed(1)}deg)`
-        el.style.pointerEvents = burstProgress > 0.6 ? 'auto' : 'none'
+        el.style.pointerEvents = burstProgress > 0.65 ? 'auto' : 'none'
       })
 
       animId = requestAnimationFrame(loop)
@@ -288,14 +351,14 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
 
     animId = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(animId)
-  }, [arcPositions, scrollProgress, total, isMobile])
+  }, [scrollProgress, total, isMobile])
 
   return (
     <div
       ref={containerRef}
       className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-hidden"
     >
-      {SKILLS.map((skill, index) => (
+      {SKILL_ITEMS.map((skill, index) => (
         <div
           key={skill.name}
           ref={(el) => {
@@ -305,26 +368,31 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
           style={{ opacity: 0, visibility: 'hidden' }}
         >
           <div className="group relative flex flex-col items-center">
-            {/* Exact Squircle Tile with Amber Glow Drop Shadow */}
+            {/* Glassmorphic Squircle Tile with Amber / Jade Accent Glow */}
             <div
-              className="w-13 h-13 sm:w-16 sm:h-16 rounded-2xl bg-[#0f171c]/95 border border-white/14 p-2.5 sm:p-3 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-115 group-hover:border-[#f0a93a] group-hover:shadow-[0_0_35px_rgba(240,169,58,0.55)] group-hover:-translate-y-1"
+              className="w-11 h-11 sm:w-15 sm:h-15 rounded-2xl bg-[#0f171c]/95 border border-white/14 p-2 sm:p-2.5 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-120 group-hover:border-[#f0a93a] group-hover:shadow-[0_0_35px_rgba(240,169,58,0.6)] group-hover:-translate-y-1.5"
               style={{
-                boxShadow: '0 12px 28px -5px rgba(0, 0, 0, 0.85), 0 0 16px rgba(240, 169, 58, 0.25)',
+                boxShadow: '0 10px 24px -5px rgba(0, 0, 0, 0.85), 0 0 14px rgba(240, 169, 58, 0.25)',
               }}
             >
               <img
                 src={skill.src}
                 alt={skill.name}
-                className="w-7 h-7 sm:w-9 sm:h-9 object-contain drop-shadow-[0_2px_10px_rgba(240,169,58,0.35)] transition-transform duration-300 group-hover:scale-110"
+                className="w-6 h-6 sm:w-8 sm:h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] transition-transform duration-300 group-hover:scale-110"
                 loading="lazy"
               />
             </div>
 
             {/* Hover Tooltip Card */}
-            <div className="absolute -bottom-9 flex flex-col items-center pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-50">
-              <span className="font-mono text-[11px] font-semibold text-white px-2.5 py-0.5 rounded-full bg-black/95 border border-white/20 backdrop-blur-md shadow-xl whitespace-nowrap">
-                {skill.name}
-              </span>
+            <div className="absolute -bottom-10 flex flex-col items-center pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-50">
+              <div className="flex flex-col items-center px-2.5 py-1 rounded-lg bg-black/95 border border-white/20 backdrop-blur-md shadow-2xl whitespace-nowrap">
+                <span className="font-mono text-[11px] font-bold text-white leading-tight">
+                  {skill.name}
+                </span>
+                <span className="font-mono text-[9px] text-[#f0a93a] tracking-wider uppercase leading-tight">
+                  {skill.tag}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -334,7 +402,7 @@ function CanvasFloatingIcons({ scrollProgress, isMobile }: CanvasFloatingIconsPr
 }
 
 // =========================================================================
-// SECTION B: PRESERVED 3D GLTF IMPLEMENTATION (Available via RENDER_MODE)
+// SECTION B: PRESERVED THREE.JS 3D GLTF SCENE (Available via RENDER_MODE)
 // =========================================================================
 
 interface ClosedBookCoverProps {
@@ -427,7 +495,7 @@ function ThreeGLTFBookModel({ scrollProgress, isMobile }: { scrollProgress: Reac
   )
 }
 
-function ThreeGLTFFloatingIcon({ skill, index, total, scrollProgress, isMobile }: { skill: (typeof SKILLS)[0]; index: number; total: number; scrollProgress: React.MutableRefObject<number>; isMobile: boolean }) {
+function ThreeGLTFFloatingIcon({ skill, index, total, scrollProgress, isMobile }: { skill: SkillItem; index: number; total: number; scrollProgress: React.MutableRefObject<number>; isMobile: boolean }) {
   const groupRef = useRef<THREE.Group>(null)
   const domRef = useRef<HTMLDivElement>(null)
 
@@ -483,8 +551,8 @@ function ThreeGLTFFloatingIcon({ skill, index, total, scrollProgress, isMobile }
     <group ref={groupRef} position={[0, -0.7, -0.4]}>
       <Html center distanceFactor={isMobile ? 8.5 : 9.5} zIndexRange={[100, 0]} style={{ pointerEvents: 'none' }}>
         <div ref={domRef} className="group relative flex flex-col items-center select-none cursor-pointer" style={{ opacity: 0, visibility: 'hidden' }}>
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#0f171c]/95 border border-white/12 p-3 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-115 group-hover:border-[#f0a93a]">
-            <img src={skill.src} alt={skill.name} className="w-8 h-8 sm:w-9 sm:h-9 object-contain" loading="lazy" />
+          <div className="w-12 h-12 sm:w-15 sm:h-15 rounded-2xl bg-[#0f171c]/95 border border-white/12 p-2.5 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-115 group-hover:border-[#f0a93a]">
+            <img src={skill.src} alt={skill.name} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" loading="lazy" />
           </div>
         </div>
       </Html>
@@ -523,7 +591,7 @@ export const BookSkillsSection: React.FC = () => {
       start: 'top top',
       end: 'bottom bottom',
       pin: pinEl,
-      scrub: 0.5,
+      scrub: 0.6,
       onToggle: (self) => {
         setIsInView(self.isActive)
       },
@@ -545,15 +613,21 @@ export const BookSkillsSection: React.FC = () => {
       ref={sectionRef}
       id="skills"
       aria-label="Skills and Secret Sauce"
-      className="relative h-[300vh] w-full bg-[#0a1315] text-[var(--text)] select-none border-t border-[var(--border-subtle)]"
+      className="relative h-[300vh] w-full bg-[#0a1315] text-[var(--text)] select-none"
     >
-      {/* Pinned Viewport Container (100vh) */}
+      {/* 
+        1. Seamless Section Blend from About:
+        A soft vertical gradient transition from About's background into Skills, eliminating any harsh border line.
+      */}
+      <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-[var(--bg)] via-[#0a1315]/80 to-transparent pointer-events-none z-30" />
+
+      {/* 2. Pinned Viewport Container (100vh) */}
       <div
         ref={pinRef}
         className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between bg-[#0a1315]"
       >
-        {/* 2D HTML Header Overlay (z-index: 10) */}
-        <div className="relative z-10 w-full pt-10 md:pt-14 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
+        {/* Top 2D HTML Header Overlay (z-index: 10) */}
+        <div className="relative z-10 w-full pt-8 md:pt-12 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
           <div className="max-w-4xl">
             {/* Subheading in mono font with Jade color (#3fae8e) */}
             <div className="flex items-center gap-3 mb-2">
@@ -575,21 +649,21 @@ export const BookSkillsSection: React.FC = () => {
             </h2>
 
             <p className="mt-2 text-xs sm:text-sm font-mono text-[var(--textLight)] max-w-xl">
-              Scroll to unlock the ancient tome and watch production engineering pipelines emerge.
+              Scroll through to unlock the ancient tome and watch production engineering pipelines emerge.
             </p>
           </div>
         </div>
 
-        {/* Core Presentation Layer */}
+        {/* 3. Core Presentation Layer */}
         {RENDER_MODE === 'CANVAS_SEQUENCE' ? (
           <div className="absolute inset-0 z-0 w-full h-full">
-            {/* Apple-Style 120 FPS Preloaded WebP Sequence Canvas */}
+            {/* Feathered Apple-Style 120 FPS Preloaded WebP Canvas */}
             <CanvasBookSequence
               scrollProgress={scrollProgressRef}
               isMobile={isMobile}
             />
 
-            {/* Zero-Lag Floating Tech Stack Icons bursting out */}
+            {/* Organic 15-Skill Scattered Constellation with Staggered Spine Burst */}
             <CanvasFloatingIcons
               scrollProgress={scrollProgressRef}
               isMobile={isMobile}
@@ -615,12 +689,12 @@ export const BookSkillsSection: React.FC = () => {
                   <ThreeGLTFBookModel scrollProgress={scrollProgressRef} isMobile={isMobile} />
                 </Float>
 
-                {SKILLS.map((skill, index) => (
+                {SKILL_ITEMS.map((skill, index) => (
                   <ThreeGLTFFloatingIcon
                     key={skill.name}
                     skill={skill}
                     index={index}
-                    total={SKILLS.length}
+                    total={SKILL_ITEMS.length}
                     scrollProgress={scrollProgressRef}
                     isMobile={isMobile}
                   />
@@ -646,12 +720,16 @@ export const BookSkillsSection: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 4. Seamless Transition into Projects Section */}
+      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent pointer-events-none z-30" />
     </section>
   )
 }
 
 // Preload original 3D model if needed
 useGLTF.preload('/models/book.glb', '/draco/gltf/')
+
 
 
 
