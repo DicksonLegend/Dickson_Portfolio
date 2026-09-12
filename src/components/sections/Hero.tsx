@@ -56,7 +56,7 @@ export const Hero: React.FC = () => {
             className="flex items-center"
           >
             <h2 className="text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-bold tracking-tight text-[var(--textTitle)] leading-[1.08] whitespace-nowrap">
-              AI Engineer
+              Developer
             </h2>
 
             {/* Extending horizontal rule directly from Hamish reference */}

@@ -2,7 +2,7 @@ import type { Project, Experience, Publication, SkillGroup, SocialLink } from '.
 
 export const personalInfo = {
   name: 'Dickson E',
-  title: 'AI Engineer',
+  title: 'Developer',
   subtitle: "Trichy, India · AI & Data Science Undergrad · B.Tech '27",
   location: 'Trichy, India',
   phone: '+91 9344970491',
