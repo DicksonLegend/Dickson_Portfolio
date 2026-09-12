@@ -18,9 +18,122 @@ const SKILLS = [
   { name: 'TensorFlow', src: '/icons/tensorflow.svg', tag: 'Deep Learning', color: '#ff6f00' },
   { name: 'AWS', src: '/icons/aws.svg', tag: 'Cloud Infrastructure', color: '#ff9900' },
   { name: 'LangChain', src: '/icons/langchain.svg', tag: 'RAG & Multi-Agent', color: '#00e5ff' },
+  { name: 'TypeScript', src: '/icons/typescript.svg', tag: 'Type-Safe Architecture', color: '#3178c6' },
 ]
 
-// 1. 3D Animated Book Model
+// =========================================================================
+// 1. 3D Closed Book Cover (Clever Visual Trick to simulate book opening)
+// =========================================================================
+interface ClosedBookCoverProps {
+  scrollProgress: React.MutableRefObject<number>
+}
+
+function ClosedBookCover({ scrollProgress }: ClosedBookCoverProps) {
+  const pivotRef = useRef<THREE.Group>(null)
+  const coverMatRef = useRef<THREE.MeshStandardMaterial>(null)
+  const goldMatRef = useRef<THREE.MeshStandardMaterial>(null)
+  const inlayMatRef = useRef<THREE.MeshStandardMaterial>(null)
+
+  useFrame(() => {
+    if (!pivotRef.current) return
+
+    const p = scrollProgress.current
+    // Opening flip animation: scroll progress 0.0 -> 0.48
+    const coverProgress = THREE.MathUtils.clamp(p / 0.48, 0, 1)
+
+    // Flip cover open on Y-axis from 0 to -145 degrees like a real book cover
+    const targetRotY = THREE.MathUtils.lerp(0, -Math.PI * 0.8, coverProgress)
+    pivotRef.current.rotation.y = targetRotY
+
+    // Slight lift as it swings open
+    pivotRef.current.position.y = THREE.MathUtils.lerp(0.55, 0.75, coverProgress)
+
+    // Fade out as it opens between 0.25 and 0.48
+    const opacity = THREE.MathUtils.clamp(1 - (coverProgress - 0.25) / 0.23, 0, 1)
+
+    if (coverMatRef.current) coverMatRef.current.opacity = opacity
+    if (goldMatRef.current) goldMatRef.current.opacity = opacity
+    if (inlayMatRef.current) inlayMatRef.current.opacity = opacity
+
+    // Hide completely once finished opening to free GPU
+    pivotRef.current.visible = opacity > 0.005
+  })
+
+  return (
+    // Pivot anchored at the left edge / spine hinge
+    <group ref={pivotRef} position={[-2.65, 0.55, -1.26]}>
+      {/* Cover assembly offset so hinge rotates around left edge */}
+      <group position={[2.65, 0, 0]}>
+        {/* Main Leather / Obsidian Cover Slab */}
+        <mesh castShadow={false} receiveShadow={false}>
+          <boxGeometry args={[5.35, 0.08, 3.68]} />
+          <meshStandardMaterial
+            ref={coverMatRef}
+            color="#0a1315"
+            roughness={0.35}
+            metalness={0.2}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+
+        {/* Embossed Gold Outer Border */}
+        <mesh position={[0, 0.045, 0]} castShadow={false} receiveShadow={false}>
+          <boxGeometry args={[5.05, 0.015, 3.42]} />
+          <meshStandardMaterial
+            ref={goldMatRef}
+            color="#f0a93a"
+            roughness={0.2}
+            metalness={0.85}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+
+        {/* Inner Dark Inlay */}
+        <mesh position={[0, 0.054, 0]} castShadow={false} receiveShadow={false}>
+          <boxGeometry args={[4.8, 0.015, 3.18]} />
+          <meshStandardMaterial
+            ref={inlayMatRef}
+            color="#0e1b1f"
+            roughness={0.45}
+            metalness={0.15}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+
+        {/* Center Gold Crest: Insignia Ring */}
+        <mesh position={[0, 0.065, 0]} rotation={[-Math.PI / 2, 0, 0]} castShadow={false} receiveShadow={false}>
+          <ringGeometry args={[0.38, 0.48, 48]} />
+          <meshStandardMaterial
+            color="#f0a93a"
+            roughness={0.2}
+            metalness={0.9}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+
+        {/* Center Gold Crest: Tech Glyph Diamond */}
+        <mesh position={[0, 0.066, 0]} rotation={[0, Math.PI / 4, 0]} castShadow={false} receiveShadow={false}>
+          <boxGeometry args={[0.26, 0.015, 0.26]} />
+          <meshStandardMaterial
+            color="#f0a93a"
+            roughness={0.2}
+            metalness={0.9}
+            transparent
+            opacity={1}
+          />
+        </mesh>
+      </group>
+    </group>
+  )
+}
+
+// =========================================================================
+// 2. Underlying 3D Book Model (Static Open Mesh)
+// =========================================================================
 interface BookModelProps {
   scrollProgress: React.MutableRefObject<number>
   isMobile: boolean
@@ -36,6 +149,12 @@ function BookModel({ scrollProgress, isMobile }: BookModelProps) {
         const mesh = child as THREE.Mesh
         mesh.castShadow = false
         mesh.receiveShadow = false
+        if (mesh.material) {
+          const mat = mesh.material as THREE.MeshStandardMaterial
+          // Ensure materials respond richly to warm amber and jade light
+          mat.roughness = Math.min(mat.roughness, 0.7)
+          mat.needsUpdate = true
+        }
       }
     })
   }, [scene])
@@ -45,20 +164,20 @@ function BookModel({ scrollProgress, isMobile }: BookModelProps) {
 
     const p = scrollProgress.current
 
-    // Book emerging and opening animation: 0.0 -> 0.55
-    // Scales up from 0.55 to 1.0 (or 0.75 on mobile)
+    // Book reveal & scaling as cover opens: 0.0 -> 0.50
+    // Scales up smoothly from 0.90 to 1.02 (or 0.58 to 0.75 on mobile)
     const targetScale = isMobile
-      ? THREE.MathUtils.lerp(0.5, 0.75, Math.min(p * 2, 1))
-      : THREE.MathUtils.lerp(0.65, 1.05, Math.min(p * 2, 1))
+      ? THREE.MathUtils.lerp(0.58, 0.75, Math.min(p * 2, 1))
+      : THREE.MathUtils.lerp(0.9, 1.04, Math.min(p * 2, 1))
 
-    // Tilted back (closed look) -> leveled open facing the camera
-    const targetRotX = THREE.MathUtils.lerp(0.95, 0.42, Math.min(p * 2.2, 1))
-    const targetRotY = Math.sin(p * Math.PI) * 0.15
+    // Tilted back when covered -> leveled open facing camera as it unlocks
+    const targetRotX = THREE.MathUtils.lerp(0.82, 0.42, Math.min(p * 2.2, 1))
+    const targetRotY = Math.sin(p * Math.PI) * 0.12
     const targetPosY = isMobile
-      ? THREE.MathUtils.lerp(-1.8, -1.2, Math.min(p * 2, 1))
-      : THREE.MathUtils.lerp(-2.2, -1.35, Math.min(p * 2, 1))
+      ? THREE.MathUtils.lerp(-1.6, -1.2, Math.min(p * 2, 1))
+      : THREE.MathUtils.lerp(-1.8, -1.35, Math.min(p * 2, 1))
 
-    // Smooth dampening
+    // Smooth dampening for organic feel
     bookGroupRef.current.scale.lerp(
       new THREE.Vector3(targetScale, targetScale, targetScale),
       delta * 6
@@ -85,12 +204,18 @@ function BookModel({ scrollProgress, isMobile }: BookModelProps) {
 
   return (
     <group ref={bookGroupRef} position={[0, -1.35, 0]}>
+      {/* Underlying Open GLB Book */}
       <primitive object={scene} />
+
+      {/* The Closed Book Cover sitting directly on top */}
+      <ClosedBookCover scrollProgress={scrollProgress} />
     </group>
   )
 }
 
-// 2. Floating Tech Stack Icon with HTML overlay
+// =========================================================================
+// 3. Floating Tech Stack Icons (Zero-Render-Cost direct DOM & Three.js sync)
+// =========================================================================
 interface FloatingIconProps {
   skill: (typeof SKILLS)[0]
   index: number
@@ -101,21 +226,19 @@ interface FloatingIconProps {
 
 function FloatingIcon({ skill, index, total, scrollProgress, isMobile }: FloatingIconProps) {
   const groupRef = useRef<THREE.Group>(null)
-  const [scale, setScale] = useState(0)
-  const [opacity, setOpacity] = useState(0)
+  const domRef = useRef<HTMLDivElement>(null)
 
-  // Calculate arc position above the book
-  // Spread in a wide horizontal arch from -PI*0.38 to +PI*0.38
+  // Calculate scattered arc positions above the book
   const { targetX, targetY, targetZ } = useMemo(() => {
-    const spread = (index / (total - 1) - 0.5) * 2 // -1 to +1
+    const spread = (index / (total - 1) - 0.5) * 2 // -1.0 to +1.0
     const angle = spread * (Math.PI * 0.38)
-    const radiusX = isMobile ? 1.6 : 3.4
-    const radiusY = isMobile ? 1.2 : 1.9
+    const radiusX = isMobile ? 1.7 : 3.5
+    const radiusY = isMobile ? 1.15 : 1.85
 
     return {
       targetX: Math.sin(angle) * radiusX,
-      targetY: (isMobile ? 0.3 : 0.6) + Math.cos(angle) * radiusY,
-      targetZ: -Math.abs(spread) * (isMobile ? 0.3 : 0.6) + 0.2,
+      targetY: (isMobile ? 0.35 : 0.65) + Math.cos(angle) * radiusY,
+      targetZ: -Math.abs(spread) * (isMobile ? 0.3 : 0.5) + 0.3,
     }
   }, [index, total, isMobile])
 
@@ -124,82 +247,99 @@ function FloatingIcon({ skill, index, total, scrollProgress, isMobile }: Floatin
 
     const p = scrollProgress.current
 
-    // Icons emerge as book opens: progress 0.35 -> 1.0
-    // Stagger based on index
-    const staggerThreshold = 0.35 + (index / total) * 0.25
-    const iconProgress = THREE.MathUtils.clamp(
-      (p - staggerThreshold) / 0.35,
-      0,
-      1
-    )
+    // Trigger skills as the cover finishes opening: scroll 0.48 -> 1.0
+    const startThreshold = 0.48 + (index / total) * 0.22
+    const rawProgress = THREE.MathUtils.clamp((p - startThreshold) / 0.28, 0, 1)
 
-    // Interpolate from center of book [0, -1, 0] to arc position
-    const currentX = THREE.MathUtils.lerp(0, targetX, iconProgress)
-    const baseCurrentY = THREE.MathUtils.lerp(-1.0, targetY, iconProgress)
-    const currentZ = THREE.MathUtils.lerp(0, targetZ, iconProgress)
+    // Snappy cubic ease-out for energetic burst
+    const burstProgress = 1 - Math.pow(1 - rawProgress, 3)
 
-    // Gentle float / bobbing when deployed
-    const bob = iconProgress > 0.8
+    // Interpolate from center of the book pages [0, -0.7, -0.4] to final arc
+    const currentX = THREE.MathUtils.lerp(0, targetX, burstProgress)
+    const baseCurrentY = THREE.MathUtils.lerp(-0.7, targetY, burstProgress)
+    const currentZ = THREE.MathUtils.lerp(-0.4, targetZ, burstProgress)
+
+    // Continuous, gentle zero-gravity bobbing when deployed
+    const bobY = burstProgress > 0.75
       ? Math.sin(state.clock.elapsedTime * 2.2 + index * 0.85) * 0.08
       : 0
+    const bobX = burstProgress > 0.75
+      ? Math.cos(state.clock.elapsedTime * 1.6 + index * 0.7) * 0.04
+      : 0
+    const bobRot = burstProgress > 0.75
+      ? Math.sin(state.clock.elapsedTime * 1.8 + index) * 0.04
+      : 0
 
+    // Smooth dampening on position
     groupRef.current.position.x = THREE.MathUtils.damp(
       groupRef.current.position.x,
-      currentX,
-      6,
+      currentX + bobX,
+      7,
       delta
     )
     groupRef.current.position.y = THREE.MathUtils.damp(
       groupRef.current.position.y,
-      baseCurrentY + bob,
-      6,
+      baseCurrentY + bobY,
+      7,
       delta
     )
     groupRef.current.position.z = THREE.MathUtils.damp(
       groupRef.current.position.z,
       currentZ,
-      6,
+      7,
       delta
     )
 
-    setScale(iconProgress)
-    setOpacity(THREE.MathUtils.clamp(iconProgress * 1.5, 0, 1))
+    // Scale and opacity
+    const scale = burstProgress
+    const opacity = THREE.MathUtils.clamp(burstProgress * 2.2, 0, 1)
+
+    // Direct DOM manipulation without causing React re-renders or unmount traps
+    if (domRef.current) {
+      if (opacity <= 0.005) {
+        domRef.current.style.opacity = '0'
+        domRef.current.style.pointerEvents = 'none'
+        domRef.current.style.visibility = 'hidden'
+      } else {
+        domRef.current.style.visibility = 'visible'
+        domRef.current.style.opacity = opacity.toFixed(3)
+        domRef.current.style.transform = `translate3d(-50%, -50%, 0) scale(${scale.toFixed(3)}) rotate(${bobRot.toFixed(3)}rad)`
+        domRef.current.style.pointerEvents = opacity > 0.6 ? 'auto' : 'none'
+      }
+    }
   })
 
-  if (scale <= 0.01) return null
-
   return (
-    <group ref={groupRef} position={[0, -1, 0]}>
+    <group ref={groupRef} position={[0, -0.7, -0.4]}>
       <Html
         center
-        distanceFactor={isMobile ? 8 : 9}
+        distanceFactor={isMobile ? 8.5 : 9.5}
         zIndexRange={[100, 0]}
-        style={{
-          opacity,
-          transform: `translate3d(-50%, -50%, 0) scale(${scale})`,
-          transition: 'transform 0.1s ease-out, opacity 0.2s ease-out',
-          pointerEvents: opacity > 0.5 ? 'auto' : 'none',
-        }}
+        style={{ pointerEvents: 'none' }}
       >
-        <div className="group relative flex flex-col items-center select-none cursor-pointer">
-          {/* Exact squircle tile from user reference image */}
+        <div
+          ref={domRef}
+          className="group relative flex flex-col items-center select-none cursor-pointer transition-transform duration-200"
+          style={{ opacity: 0, visibility: 'hidden' }}
+        >
+          {/* Exact Squircle Tile with Amber Drop Shadow */}
           <div
-            className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-[#14171f]/95 border border-white/12 p-3 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-115 group-hover:border-[#f0a93a] group-hover:shadow-[0_0_30px_rgba(240,169,58,0.4)] group-hover:-translate-y-1"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#0f171c]/95 border border-white/12 p-3 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-300 group-hover:scale-115 group-hover:border-[#f0a93a] group-hover:shadow-[0_0_30px_rgba(240,169,58,0.5)] group-hover:-translate-y-1"
             style={{
-              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 0, 0, 0.4)',
+              boxShadow: '0 12px 28px -5px rgba(0, 0, 0, 0.8), 0 0 16px rgba(240, 169, 58, 0.25)',
             }}
           >
             <img
               src={skill.src}
               alt={skill.name}
-              className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-[0_2px_10px_rgba(240,169,58,0.25)] transition-transform duration-300 group-hover:scale-110"
+              className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-[0_2px_10px_rgba(240,169,58,0.35)] transition-transform duration-300 group-hover:scale-110"
               loading="lazy"
             />
           </div>
 
           {/* Hover Tooltip Card */}
-          <div className="absolute -bottom-10 flex flex-col items-center pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-50">
-            <span className="font-mono text-[11px] font-semibold text-white px-2.5 py-0.5 rounded-full bg-black/85 border border-white/15 backdrop-blur-md shadow-lg whitespace-nowrap">
+          <div className="absolute -bottom-9 flex flex-col items-center pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-50">
+            <span className="font-mono text-[11px] font-semibold text-white px-2.5 py-0.5 rounded-full bg-black/90 border border-white/20 backdrop-blur-md shadow-lg whitespace-nowrap">
               {skill.name}
             </span>
           </div>
@@ -209,7 +349,83 @@ function FloatingIcon({ skill, index, total, scrollProgress, isMobile }: Floatin
   )
 }
 
-// 3. Main BookSkillsSection Component
+// =========================================================================
+// 4. Dynamic Lighting Rig (Amber Warm Glow + Jade Rim Light)
+// =========================================================================
+interface LightingRigProps {
+  scrollProgress: React.MutableRefObject<number>
+}
+
+function LightingRig({ scrollProgress }: LightingRigProps) {
+  const amberLightRef = useRef<THREE.PointLight>(null)
+  const jadeLightRef = useRef<THREE.PointLight>(null)
+
+  useFrame(() => {
+    const p = scrollProgress.current
+
+    // Warm amber glow intensifies as the book opens (from 12 up to 28)
+    if (amberLightRef.current) {
+      amberLightRef.current.intensity = THREE.MathUtils.lerp(12, 28, Math.min(p * 2, 1))
+    }
+
+    // Jade rim light stays crisp and deep
+    if (jadeLightRef.current) {
+      jadeLightRef.current.intensity = THREE.MathUtils.lerp(14, 22, Math.min(p * 2, 1))
+    }
+  })
+
+  return (
+    <>
+      {/* Base Balanced Fill Light */}
+      <ambientLight intensity={1.3} color="#e0f2fe" />
+
+      {/* Directional Key Light for Crisp Highlights */}
+      <directionalLight position={[3.5, 4.5, 3.5]} intensity={2.2} color="#ffffff" />
+
+      {/* Amber PointLight shining directly into the open book */}
+      <pointLight
+        ref={amberLightRef}
+        position={[0, 1.8, 0.4]}
+        intensity={20}
+        distance={10}
+        decay={1.8}
+        color="#f0a93a"
+      />
+
+      {/* Secondary PointLight inside pages for radiant warm spill */}
+      <pointLight
+        position={[0, 0.1, -1.0]}
+        intensity={9}
+        distance={6}
+        decay={2.0}
+        color="#f0a93a"
+      />
+
+      {/* Jade PointLight for sharp rim lighting from the side */}
+      <pointLight
+        ref={jadeLightRef}
+        position={[-4.2, 0.8, 2.0]}
+        intensity={18}
+        distance={12}
+        decay={1.8}
+        color="#3fae8e"
+      />
+
+      {/* Signature Cyan Accent Side Light */}
+      <pointLight
+        position={[4.0, 0.6, 1.6]}
+        intensity={8}
+        distance={10}
+        decay={2.0}
+        color="#00e5ff"
+      />
+    </>
+  )
+}
+
+// =========================================================================
+// 5. Main BookSkillsSection Component
+// =========================================================================
 export const BookSkillsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
@@ -289,7 +505,7 @@ export const BookSkillsSection: React.FC = () => {
             </h2>
 
             <p className="mt-3 text-sm sm:text-base font-mono text-[var(--textLight)] max-w-xl">
-              Scroll through to uncover the production technologies and model pipelines powering my software.
+              Scroll through to unlock the secret tome and watch production skills emerge.
             </p>
           </div>
         </div>
@@ -302,38 +518,22 @@ export const BookSkillsSection: React.FC = () => {
             frameloop={isInView ? 'always' : 'never'}
             gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
           >
-            {/* Background Color */}
+            {/* Deep Teal Background */}
             <color attach="background" args={['#0a1315']} />
 
-            {/* Lighting */}
-            <ambientLight intensity={0.5} color="#ffffff" />
-
-            <pointLight
-              position={[0, 1.8, 1.2]}
-              intensity={4.5}
-              distance={8}
-              color="#f0a93a"
-            />
-
-            <pointLight
-              position={[-3.5, 0.8, 2.0]}
-              intensity={3.0}
-              distance={9}
-              color="#3fae8e"
-            />
-
-            <directionalLight position={[3, 4, 3]} intensity={1.2} color="#ffffff" />
+            {/* Dynamic Amber & Jade Lighting Rig */}
+            <LightingRig scrollProgress={scrollProgressRef} />
 
             <Suspense fallback={null}>
-              <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.1}>
-                {/* 3D Book Model centered at bottom */}
+              <Float speed={1.0} rotationIntensity={0.08} floatIntensity={0.08}>
+                {/* 3D Book with Closed Cover Flip Animation */}
                 <BookModel
                   scrollProgress={scrollProgressRef}
                   isMobile={isMobile}
                 />
               </Float>
 
-              {/* Floating Tech Stack Icons emerging from the book */}
+              {/* Floating Tech Stack Icons bursting out from 50% to 100% */}
               {SKILLS.map((skill, index) => (
                 <FloatingIcon
                   key={skill.name}
@@ -359,7 +559,7 @@ export const BookSkillsSection: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 font-mono text-xs text-[#3fae8e]">
-            <span>SCROLL TO EXPLORE</span>
+            <span>SCROLL TO UNLOCK</span>
             <span className="animate-bounce">↓</span>
           </div>
         </div>
@@ -370,4 +570,5 @@ export const BookSkillsSection: React.FC = () => {
 
 // Preload optimized model and local Draco decoder
 useGLTF.preload('/models/book.glb', '/draco/gltf/')
+
 
