@@ -49,7 +49,7 @@ class AnimationController {
   public readonly changeEventTime = 0.30
   public readonly cameraZ = -400
   public readonly cameraTravelDistance = 3500
-  public readonly startDotYOffset = 28
+  public readonly startDotYOffset = 0
   public readonly viewZoom = 100
   public readonly numberOfStars = 5000
   public readonly trailLength = 80

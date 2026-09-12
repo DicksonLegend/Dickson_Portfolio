@@ -109,7 +109,7 @@ export function IntroLoader({
           />
         </div>
 
-        {/* Center Minimalist Button - Appears gracefully from the start without React re-render */}
+        {/* Center Minimalist Button - Dead-centered on ENTER */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={
@@ -122,25 +122,26 @@ export function IntroLoader({
               ? { duration: 0.6, ease: 'easeInOut' }
               : { duration: 1.2, delay: 0.3, ease: 'easeOut' }
           }
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center pointer-events-auto"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto"
         >
           <motion.button
             onClick={handleTransition}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.96 }}
-            className="group relative px-10 py-5 focus:outline-none"
+            className="group relative flex flex-col items-center justify-center focus:outline-none py-4 px-8"
           >
-            {/* Subtle backlight glow */}
-            <div className="absolute inset-0 rounded-full bg-white/[0.03] blur-xl group-hover:bg-cyan-500/15 transition-all duration-700" />
+            {/* Subtle backlight glow centered on the text */}
+            <div className="absolute inset-0 -m-6 rounded-full bg-white/[0.03] blur-xl group-hover:bg-cyan-500/15 transition-all duration-700 pointer-events-none" />
 
-            <div className="relative flex flex-col items-center">
-              <span className="text-white text-2xl sm:text-3xl tracking-[0.32em] uppercase font-extralight transition-all duration-700 group-hover:tracking-[0.42em] group-hover:text-cyan-100 animate-pulse">
-                ENTER
-              </span>
-              <span className="mt-2 text-[10px] font-mono tracking-[0.25em] text-white/35 uppercase transition-colors duration-500 group-hover:text-cyan-300/70">
-                DICKSON E // AI ENGINEER
-              </span>
-            </div>
+            {/* Exactly centered ENTER title */}
+            <span className="text-white text-2xl sm:text-3xl tracking-[0.32em] uppercase font-extralight transition-all duration-700 group-hover:tracking-[0.42em] group-hover:text-cyan-100 animate-pulse pl-[0.32em] leading-none select-none">
+              ENTER
+            </span>
+
+            {/* Subtitle positioned absolutely below without pulling ENTER off-center */}
+            <span className="absolute top-full mt-3 text-[10px] font-mono tracking-[0.25em] text-white/35 uppercase transition-colors duration-500 group-hover:text-cyan-300/70 whitespace-nowrap pl-[0.25em] select-none">
+              DICKSON E // AI ENGINEER
+            </span>
           </motion.button>
         </motion.div>
 
