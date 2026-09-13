@@ -1,21 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 export function CustomCursor() {
-  const [mounted, setMounted] = useState(false)
   const cursorRef = useRef<HTMLDivElement>(null)
   const auraRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setMounted(true)
-
     const cursor = cursorRef.current
     const aura = auraRef.current
     const container = containerRef.current
 
     if (!cursor || !aura || !container) return
 
+    // Initialize to offscreen or center until first mouse movement
     let mouseX = -100
     let mouseY = -100
     let cursorX = -100
@@ -26,7 +24,6 @@ export function CustomCursor() {
     let currentTilt = 0
     let targetTilt = 0
     let isVisible = false
-    let isHovered = false
     let isDown = false
     let rafId: number
 
@@ -44,8 +41,8 @@ export function CustomCursor() {
         // Velocity tilt
         currentTilt += (targetTilt - currentTilt) * 0.15
 
-        const scale = isDown ? 0.82 : isHovered ? 1.22 : 1.0
-        const auraScale = isDown ? 0.6 : isHovered ? 1.8 : 1.0
+        const scale = isDown ? 0.88 : 1.0
+        const auraScale = isDown ? 0.8 : 1.0
 
         // Direct GPU transforms
         cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) rotate(${currentTilt}deg) scale(${scale})`
@@ -66,29 +63,12 @@ export function CustomCursor() {
         auraX = mouseX
         auraY = mouseY
         container.style.opacity = '1'
-        document.body.classList.add('has-custom-cursor')
       }
 
       // Calculate movement velocity for dynamic tilt
       const vx = e.clientX - lastX
       targetTilt = Math.max(-14, Math.min(14, vx * 0.45))
       lastX = e.clientX
-
-      // Check if hovering interactive elements
-      const target = e.target as HTMLElement | null
-      if (target) {
-        const interactive = target.closest(
-          'a, button, [role="button"], input, select, textarea, label, [data-interactive="true"], .cursor-pointer'
-        )
-        if (!!interactive !== isHovered) {
-          isHovered = !!interactive
-          if (isHovered) {
-            aura.style.opacity = '0.85'
-          } else {
-            aura.style.opacity = '0.45'
-          }
-        }
-      }
     }
 
     const onMouseDown = () => {
@@ -109,7 +89,7 @@ export function CustomCursor() {
       container.style.opacity = '1'
     }
 
-    // Start RAF loop
+    // Start RAF loop immediately
     rafId = requestAnimationFrame(render)
 
     window.addEventListener('mousemove', onMouseMove, { passive: true })
@@ -120,7 +100,6 @@ export function CustomCursor() {
 
     return () => {
       cancelAnimationFrame(rafId)
-      document.body.classList.remove('has-custom-cursor')
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mouseup', onMouseUp)
@@ -129,20 +108,20 @@ export function CustomCursor() {
     }
   }, [])
 
-  if (!mounted || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
     return null
   }
 
-  // Mount directly onto document.body via Portal to escape any transformed/overflow parents
+  // Mount directly onto document.body via Portal on first render
   return createPortal(
     <div
       ref={containerRef}
       id="custom-cursor-container"
-      className="pointer-events-none fixed inset-0 z-[2147483647] overflow-visible transition-opacity duration-200"
+      className="pointer-events-none fixed inset-0 z-[2147483647] overflow-visible transition-opacity duration-150"
       style={{ opacity: 0 }}
       aria-hidden="true"
     >
-      {/* Trailing Ambient Neon Aura Halo */}
+      {/* Trailing Ambient Neon Aura */}
       <div
         ref={auraRef}
         className="pointer-events-none fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 will-change-transform transition-opacity duration-300"
@@ -165,7 +144,7 @@ export function CustomCursor() {
           alt=""
           width={34}
           height={34}
-          className="w-[34px] h-[34px] select-none pointer-events-none drop-shadow-[0_2px_12px_rgba(217,70,239,0.7)]"
+          className="w-[34px] h-[34px] select-none pointer-events-none drop-shadow-[0_2px_12px_rgba(217,70,239,0.75)]"
           draggable={false}
         />
       </div>

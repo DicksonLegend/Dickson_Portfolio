@@ -132,15 +132,25 @@ body {
   }
 }
 
-/* Custom Neon Cursor Styles */
+/* Custom Neon Cursor Styles - Completely suppress default OS cursor on all elements & hover states */
 @media (pointer: fine) {
-  body {
-    cursor: url('/cursor/cursor-32.png') 0 0, auto;
-  }
-
-  body.has-custom-cursor,
-  body.has-custom-cursor * {
+  *,
+  *::before,
+  *::after,
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  .cursor-pointer,
+  *:hover,
+  *:active,
+  *:focus {
     cursor: none !important;
   }
 }
+
 
