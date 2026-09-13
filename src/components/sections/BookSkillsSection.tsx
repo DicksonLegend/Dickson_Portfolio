@@ -570,6 +570,7 @@ function ThreeGLTFFloatingIcon({ skill, index, total, scrollProgress, isMobile }
 export const BookSkillsSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
+  const innerCardRef = useRef<HTMLDivElement>(null)
   const hudPercentRef = useRef<HTMLSpanElement>(null)
   const scrollProgressRef = useRef<number>(0)
   const [isInView, setIsInView] = useState<boolean>(false)
@@ -599,9 +600,32 @@ export const BookSkillsSection: React.FC = () => {
         setIsInView(self.isActive)
       },
       onUpdate: (self) => {
-        scrollProgressRef.current = self.progress
+        const p = self.progress
+        scrollProgressRef.current = p
         if (hudPercentRef.current) {
-          hudPercentRef.current.innerText = `${Math.round(self.progress * 100)}% UNLOCKED`
+          hudPercentRef.current.innerText = `${Math.round(p * 100)}% UNLOCKED`
+        }
+
+        // TinyWins / Reference screencast transition:
+        // As scrollProgress reaches the end (0.84 -> 1.0), shrink full-bleed container into a centered rounded box
+        if (innerCardRef.current) {
+          if (p > 0.84) {
+            const shrinkP = Math.min(1, (p - 0.84) / 0.16)
+            const ease = 1 - Math.pow(1 - shrinkP, 2)
+            const scale = 1 - ease * 0.18 // 1.0 -> 0.82
+            const radius = ease * 32 // 0px -> 32px
+            const borderAlpha = ease * 0.18
+            const shadowAlpha = ease * 0.85
+            innerCardRef.current.style.transform = `scale(${scale.toFixed(4)})`
+            innerCardRef.current.style.borderRadius = `${radius.toFixed(1)}px`
+            innerCardRef.current.style.border = `1px solid rgba(255, 255, 255, ${borderAlpha.toFixed(3)})`
+            innerCardRef.current.style.boxShadow = `0 35px 90px -20px rgba(0, 0, 0, ${shadowAlpha.toFixed(3)}), 0 0 45px rgba(63, 174, 142, ${(ease * 0.09).toFixed(3)})`
+          } else {
+            innerCardRef.current.style.transform = 'scale(1)'
+            innerCardRef.current.style.borderRadius = '0px'
+            innerCardRef.current.style.border = '1px solid transparent'
+            innerCardRef.current.style.boxShadow = 'none'
+          }
         }
       },
     })
@@ -616,7 +640,7 @@ export const BookSkillsSection: React.FC = () => {
       ref={sectionRef}
       id="skills"
       aria-label="Skills and Secret Sauce"
-      className="relative h-[300vh] w-full bg-[#0a1315] text-[var(--text)] select-none"
+      className="relative h-[300vh] w-full bg-[#070e10] text-[var(--text)] select-none"
     >
       {/* 
         1. Seamless Section Blend from About:
@@ -627,11 +651,16 @@ export const BookSkillsSection: React.FC = () => {
       {/* 2. Pinned Viewport Container (100vh) */}
       <div
         ref={pinRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between bg-[#0a1315]"
+        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#070e10]"
       >
-        {/* Top 2D HTML Header Overlay (z-index: 10) */}
-        <div className="relative z-10 w-full pt-8 md:pt-12 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
-          <div className="max-w-4xl">
+        {/* Inner Card Container that smoothly minimizes into a squircle box near the end */}
+        <div
+          ref={innerCardRef}
+          className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0a1315] will-change-transform origin-center"
+        >
+          {/* Top 2D HTML Header Overlay (z-index: 10) */}
+          <div className="relative z-10 w-full pt-8 md:pt-12 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
+            <div className="max-w-4xl">
             {/* Subheading in mono font with Jade color (#3fae8e) */}
             <div className="flex items-center gap-3 mb-2">
               <span className="font-mono text-xs tracking-[0.3em] uppercase text-[#3fae8e] font-semibold">
@@ -722,10 +751,13 @@ export const BookSkillsSection: React.FC = () => {
             <span className="animate-bounce">↓</span>
           </div>
         </div>
+        {/* End Inner Card Container */}
+        </div>
+      {/* End Pinned Container */}
       </div>
 
       {/* 4. Seamless Transition into Projects Section */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[var(--bg)] to-transparent pointer-events-none z-30" />
+      <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-[#060c0e] to-transparent pointer-events-none z-30" />
     </section>
   )
 }
