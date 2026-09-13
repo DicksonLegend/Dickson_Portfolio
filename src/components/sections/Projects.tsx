@@ -95,8 +95,8 @@ export const Projects: React.FC = () => {
         start: 'top top',
         end: 'bottom bottom',
         pin: pinEl,
+        pinSpacing: true,
         scrub: 1.2, // Momentum-smoothed scrub for buttery mousewheel and trackpad feel
-        anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           const currentX = -self.progress * totalDist
@@ -112,7 +112,13 @@ export const Projects: React.FC = () => {
     scrollTriggerRef.current = tween.scrollTrigger || null
     updateCardTransforms(0, pitch, cardW)
 
+    // Force refresh to ensure all preceding sections and pin spacers are calibrated
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh()
+    }, 150)
+
     return () => {
+      clearTimeout(refreshTimer)
       tween.scrollTrigger?.kill()
       tween.kill()
     }
@@ -161,7 +167,7 @@ export const Projects: React.FC = () => {
       {/* Pinned 100vh Viewport */}
       <div
         ref={pinRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between py-6 md:py-8 bg-[#060c0e]/95 backdrop-blur-3xl"
+        className="relative h-screen w-full overflow-hidden flex flex-col justify-between pt-8 sm:pt-10 md:pt-12 pb-4 md:pb-6 bg-[#060c0e]/95 backdrop-blur-3xl"
       >
         {/* =========================================================================
             1. TOP HEADER: "Engineered to be [word]."

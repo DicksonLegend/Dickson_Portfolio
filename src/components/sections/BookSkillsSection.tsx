@@ -595,6 +595,8 @@ export const BookSkillsSection: React.FC = () => {
       start: 'top top',
       end: 'bottom bottom',
       pin: pinEl,
+      pinSpacing: true,
+      invalidateOnRefresh: true,
       scrub: 0.6,
       onToggle: (self) => {
         setIsInView(self.isActive)
@@ -651,7 +653,7 @@ export const BookSkillsSection: React.FC = () => {
       {/* 2. Pinned Viewport Container (100vh) */}
       <div
         ref={pinRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#070e10]"
+        className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-[#070e10]"
       >
         {/* Inner Card Container that smoothly minimizes into a squircle box near the end */}
         <div
