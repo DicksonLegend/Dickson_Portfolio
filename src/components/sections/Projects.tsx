@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { projectsData } from '@/data/portfolioData'
-import { ArrowUpRight, ExternalLink, ChevronLeft, ChevronRight, Layers, Sparkles } from 'lucide-react'
+import { ArrowUpRight, ExternalLink, ChevronLeft, ChevronRight, Layers } from 'lucide-react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,13 +13,7 @@ const GithubIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' })
   </svg>
 )
 
-// Soundwave visualizer bar pattern (48 bars total, 4 per project)
-const WAVEFORM_HEIGHTS = [
-  12, 22, 16, 28, 14, 20, 26, 18, 10, 24, 32, 16,
-  14, 28, 20, 12, 26, 34, 18, 22, 14, 30, 24, 16,
-  10, 18, 28, 22, 16, 32, 20, 14, 26, 18, 30, 24,
-  14, 22, 18, 28, 12, 26, 32, 20, 16, 24, 18, 12,
-]
+const TOTAL_WAVEFORM_BARS = 41
 
 export const Projects: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -31,7 +25,6 @@ export const Projects: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const activeIndexRef = useRef<number>(0)
   const [isMobile, setIsMobile] = useState<boolean>(false)
-  const [scrollPercent, setScrollPercent] = useState<number>(0)
 
   // Detect viewport size
   useEffect(() => {
@@ -43,101 +36,89 @@ export const Projects: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Update card transform scales and opacities based on distance to visual center
-  const updateCardTransforms = useCallback(() => {
-    const track = trackRef.current
-    if (!track) return
+  // Pure mathematical distance calculation: 0 layout reflows (120 FPS smooth)
+  const updateCardTransforms = useCallback((currentX: number, pitch: number, cardW: number) => {
+    const closestIdx = Math.max(0, Math.min(projectsData.length - 1, Math.round(-currentX / pitch)))
 
-    // Desktop focal center offset takes into account the 80px left sidebar
-    const viewportW = window.innerWidth
-    const focalCenter = window.innerWidth < 768 ? viewportW * 0.5 : (viewportW + 80) * 0.5
-    const falloffRadius = viewportW * 0.48
+    if (closestIdx !== activeIndexRef.current) {
+      activeIndexRef.current = closestIdx
+      setActiveIndex(closestIdx)
+    }
 
-    let closestIdx = 0
-    let minDistance = Infinity
+    const falloffRadius = cardW * 1.45
 
     cardRefs.current.forEach((card, idx) => {
       if (!card) return
 
-      const rect = card.getBoundingClientRect()
-      const cardCenter = rect.left + rect.width / 2
-      const dist = Math.abs(cardCenter - focalCenter)
-
-      if (dist < minDistance) {
-        minDistance = dist
-        closestIdx = idx
-      }
-
-      // Distance normalized: 0 at exact center, 1 at edge of focal zone
+      // Mathematical offset from the visual focal point
+      const dist = Math.abs(currentX + idx * pitch)
       const normDist = Math.min(2.5, dist / falloffRadius)
 
-      // Focal magnification: center card pops up to 1.08x, flanking cards scale down
+      // Focal magnification: active card pops up to 1.08x, flanking cards scale down
       const scale = Math.max(0.48, Math.min(1.08, 1.08 - normDist * 0.55))
       const opacity = Math.max(0.28, Math.min(1.0, 1.0 - normDist * 0.68))
       const zIndex = Math.round(100 - normDist * 50)
-      const brightness = Math.max(0.4, 1.0 - normDist * 0.4)
+      const brightness = Math.max(0.42, 1.0 - normDist * 0.38)
 
       card.style.transform = `scale(${scale.toFixed(4)})`
       card.style.opacity = opacity.toFixed(3)
       card.style.zIndex = `${zIndex}`
       card.style.filter = `brightness(${brightness.toFixed(3)})`
     })
-
-    if (closestIdx !== activeIndexRef.current) {
-      activeIndexRef.current = closestIdx
-      setActiveIndex(closestIdx)
-    }
   }, [])
 
-  // Initialize GSAP Pinned Horizontal Scrub
+  // Initialize GSAP Pinned Horizontal Scrub with momentum smoothing
   useEffect(() => {
     const section = sectionRef.current
     const pinEl = pinRef.current
     const track = trackRef.current
     if (!section || !pinEl || !track) return
 
-    // Compute max scroll translation
-    const calculateDistance = () => {
-      const trackW = track.scrollWidth
-      const viewportW = window.innerWidth
-      const focalCenter = window.innerWidth < 768 ? viewportW * 0.5 : (viewportW + 80) * 0.5
-      const cardW = window.innerWidth < 640 ? 320 : window.innerWidth < 1024 ? 400 : 460
-      // Pad so first card starts centered and last card finishes centered
-      return Math.max(0, trackW - viewportW + (viewportW - focalCenter - cardW / 2))
-    }
+    const cardW = window.innerWidth < 640 ? 320 : window.innerWidth < 1024 ? 400 : 460
+    const gap = window.innerWidth < 640 ? 24 : 36
+    const pitch = cardW + gap
+    const totalDist = (projectsData.length - 1) * pitch
 
-    const trigger = ScrollTrigger.create({
-      trigger: section,
-      start: 'top top',
-      end: 'bottom bottom',
-      pin: pinEl,
-      scrub: 0.8,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const p = self.progress
-        setScrollPercent(Math.round(p * 100))
+    const viewportW = window.innerWidth
+    const focalCenter = window.innerWidth < 768 ? viewportW * 0.5 : (viewportW + 80) * 0.5
+    const padLeft = focalCenter - cardW / 2
+    const padRight = viewportW - focalCenter
 
-        const maxDist = calculateDistance()
-        const currentX = -p * maxDist
-        track.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`
+    track.style.paddingLeft = `${padLeft}px`
+    track.style.paddingRight = `${padRight}px`
 
-        updateCardTransforms()
-      },
-      onRefresh: () => {
-        updateCardTransforms()
+    const tween = gsap.to(track, {
+      x: -totalDist,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        pin: pinEl,
+        scrub: 1.2, // Momentum-smoothed scrub for buttery mousewheel and trackpad feel
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const currentX = -self.progress * totalDist
+          updateCardTransforms(currentX, pitch, cardW)
+        },
+        onRefresh: (self) => {
+          const currentX = -self.progress * totalDist
+          updateCardTransforms(currentX, pitch, cardW)
+        },
       },
     })
 
-    scrollTriggerRef.current = trigger
-    updateCardTransforms()
+    scrollTriggerRef.current = tween.scrollTrigger || null
+    updateCardTransforms(0, pitch, cardW)
 
     return () => {
-      trigger.kill()
+      tween.scrollTrigger?.kill()
+      tween.kill()
     }
   }, [updateCardTransforms])
 
-  // Click on waveform or card to smoothly scroll to that project
+  // Click on waveform bar, chevron, or card to smoothly scroll directly to that project
   const scrollToProject = (targetIndex: number) => {
     const trigger = scrollTriggerRef.current
     if (!trigger) return
@@ -161,7 +142,19 @@ export const Projects: React.FC = () => {
       aria-label="Selected Works and Flagship Projects"
       className="relative h-[480vh] w-full bg-[#060c0e] text-[var(--text)] select-none"
     >
-      {/* Ambient background mesh glow */}
+      {/* Waveform living pulse CSS animation */}
+      <style>{`
+        @keyframes livingWaveform {
+          0%, 100% {
+            transform: scaleY(0.85);
+          }
+          50% {
+            transform: scaleY(1.18);
+          }
+        }
+      `}</style>
+
+      {/* Ambient background mesh glows */}
       <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#00e5ff]/5 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[#f0a93a]/5 rounded-full blur-[160px] pointer-events-none" />
 
@@ -171,7 +164,7 @@ export const Projects: React.FC = () => {
         className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between py-6 md:py-8 bg-[#060c0e]/95 backdrop-blur-3xl"
       >
         {/* =========================================================================
-            1. TOP HEADER: TinyWins Dynamic "Make them feel [feelWord]" Headline
+            1. TOP HEADER: "Engineered to be [word]."
             ========================================================================= */}
         <div className="relative z-20 w-full px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
           <div className="max-w-5xl">
@@ -187,15 +180,15 @@ export const Projects: React.FC = () => {
               </span>
             </div>
 
-            {/* Dynamic TinyWins-Style Hero Headline */}
+            {/* Impactful 3-word sentence + Dynamic technical virtue word */}
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white flex flex-wrap items-baseline gap-x-3">
-              <span>Make them feel</span>
+              <span>Engineered to be</span>
               <span
                 key={currentProject.id}
                 className="font-serif italic font-normal inline-block transition-all duration-300 drop-shadow-[0_0_35px_rgba(240,169,58,0.35)]"
                 style={{ color: currentProject.accentColor || '#f0a93a' }}
               >
-                {currentProject.feelWord || 'empowered'}.
+                {currentProject.feelWord || 'optimal'}.
               </span>
             </h2>
 
@@ -211,11 +204,7 @@ export const Projects: React.FC = () => {
         <div className="relative z-10 w-full overflow-visible py-4 my-auto">
           <div
             ref={trackRef}
-            className="flex items-center gap-6 sm:gap-8 md:gap-10 will-change-transform"
-            style={{
-              paddingLeft: isMobile ? 'calc(50vw - 160px)' : 'calc(50vw - 230px + 40px)',
-              paddingRight: '50vw',
-            }}
+            className="flex items-center gap-6 sm:gap-9 will-change-transform"
           >
             {projectsData.map((project, index) => {
               const isActive = index === activeIndex
@@ -378,60 +367,80 @@ export const Projects: React.FC = () => {
         </div>
 
         {/* =========================================================================
-            3. BOTTOM HUD: Soundwave Visualizer & Active Project Scrub Controller
+            3. BOTTOM HUD: Minimal Borderless Waveform Visualizer (TinyWins Reference)
             ========================================================================= */}
-        <div className="relative z-20 w-full px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
-            {/* Left: Active Project Indicator */}
-            <div className="flex items-center gap-3 font-mono text-xs">
-              <span
-                className="w-2 h-2 rounded-full animate-ping"
-                style={{ backgroundColor: currentProject.accentColor || '#f0a93a' }}
-              />
-              <span className="text-white font-bold tracking-wider">
-                {String(activeIndex + 1).padStart(2, '0')} // 12
-              </span>
-              <span className="text-white/40 hidden sm:inline">·</span>
-              <span className="text-white/90 uppercase tracking-wide truncate max-w-[200px] sm:max-w-xs font-semibold">
-                {currentProject.title}
-              </span>
-            </div>
-
-            {/* Center: Audio-Waveform Visualizer Scrub Bar */}
-            <div
-              className="flex items-center gap-[3px] sm:gap-[4px] px-3 py-2 rounded-full bg-white/[0.03] border border-white/10 cursor-pointer hover:border-white/25 transition-all duration-300"
-              title="Click anywhere to scrub between projects"
+        <div className="relative z-20 w-full pb-2 md:pb-4 flex flex-col items-center justify-center pointer-events-auto select-none">
+          {/* Active Project Title & Technical Virtue (like AXUM CAPITAL STEADY in TinyWins) */}
+          <div className="flex items-center justify-center gap-3 mb-2.5 font-mono text-xs tracking-[0.25em] uppercase">
+            <span className="text-white/40">{String(activeIndex + 1).padStart(2, '0')} //</span>
+            <span className="text-white font-bold tracking-[0.22em] drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]">
+              {currentProject.title}
+            </span>
+            <span
+              className="font-serif italic font-normal tracking-normal lowercase transition-colors duration-300"
+              style={{ color: currentProject.accentColor || '#f0a93a' }}
             >
-              {WAVEFORM_HEIGHTS.map((height, barIdx) => {
-                // Each project corresponds to 4 bars (48 / 12 = 4)
-                const projectIdxForBar = Math.floor(barIdx / 4)
-                const isCurrentProjectBar = projectIdxForBar === activeIndex
-                const isPassed = projectIdxForBar < activeIndex
+              · {currentProject.feelWord}
+            </span>
+          </div>
+
+          {/* Minimal Borderless Audio Waveform Visualizer */}
+          <div className="relative flex items-center justify-center gap-4 sm:gap-6">
+            {/* Minimal Ghost Prev Chevron */}
+            <button
+              type="button"
+              onClick={() => scrollToProject(activeIndex - 1)}
+              disabled={activeIndex === 0}
+              aria-label="Previous project"
+              className="p-1 text-white/30 hover:text-white disabled:opacity-0 transition-all duration-300 focus:outline-none cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+
+            {/* Symmetrical Bell-Curve Waveform (Zero Border, Zero Capsule, Pure Negative Space) */}
+            <div
+              className="flex items-center gap-[3px] sm:gap-[4px] py-1 cursor-pointer"
+              title="Click or scrub to navigate projects"
+            >
+              {Array.from({ length: TOTAL_WAVEFORM_BARS }).map((_, barIdx) => {
+                // Map current active index to center bar
+                const activeBar = Math.round(
+                  (activeIndex / (projectsData.length - 1)) * (TOTAL_WAVEFORM_BARS - 1)
+                )
+                const delta = Math.abs(barIdx - activeBar)
+                // Gaussian bell curve: sharp peak at active position, descending to subtle dots on sides
+                const bell = Math.exp(-Math.pow(delta / 4.2, 2))
+                const height = Math.max(3, Math.round(3 + bell * 28))
+                const isFocal = bell > 0.45
+                const isMid = bell > 0.15
 
                 return (
                   <button
                     key={barIdx}
                     type="button"
-                    onClick={() => scrollToProject(projectIdxForBar)}
-                    aria-label={`Jump to project ${projectIdxForBar + 1}`}
+                    onClick={() => {
+                      const targetProject = Math.round(
+                        (barIdx / (TOTAL_WAVEFORM_BARS - 1)) * (projectsData.length - 1)
+                      )
+                      scrollToProject(targetProject)
+                    }}
+                    aria-label={`Jump to project from bar ${barIdx + 1}`}
                     className="group/bar relative flex items-center justify-center p-[1px] focus:outline-none"
                   >
                     <span
-                      className={`w-[3px] rounded-full transition-all duration-300 ${
-                        isCurrentProjectBar
-                          ? 'scale-y-125'
-                          : 'group-hover/bar:scale-y-125'
-                      }`}
+                      className="w-[2.5px] sm:w-[3px] rounded-full transition-all duration-300"
                       style={{
                         height: `${height}px`,
-                        backgroundColor: isCurrentProjectBar
+                        backgroundColor: isFocal
                           ? currentProject.accentColor || '#f0a93a'
-                          : isPassed
-                          ? 'rgba(255, 255, 255, 0.5)'
-                          : 'rgba(255, 255, 255, 0.15)',
-                        boxShadow: isCurrentProjectBar
-                          ? `0 0 10px ${currentProject.accentColor || '#f0a93a'}`
+                          : isMid
+                          ? 'rgba(255, 255, 255, 0.45)'
+                          : 'rgba(255, 255, 255, 0.14)',
+                        boxShadow: isFocal
+                          ? `0 0 12px ${currentProject.accentColor || '#f0a93a'}99`
                           : 'none',
+                        animation: 'livingWaveform 1.8s ease-in-out infinite',
+                        animationDelay: `${(barIdx * 0.05).toFixed(2)}s`,
                       }}
                     />
                   </button>
@@ -439,34 +448,16 @@ export const Projects: React.FC = () => {
               })}
             </div>
 
-            {/* Right: Scrub Navigation Controls & Progress Percentage */}
-            <div className="flex items-center gap-4 font-mono text-xs text-[var(--text-muted)]">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => scrollToProject(activeIndex - 1)}
-                  disabled={activeIndex === 0}
-                  className="p-1.5 rounded-lg border border-white/10 hover:border-white/30 text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                  aria-label="Previous project"
-                >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollToProject(activeIndex + 1)}
-                  disabled={activeIndex === projectsData.length - 1}
-                  className="p-1.5 rounded-lg border border-white/10 hover:border-white/30 text-white disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                  aria-label="Next project"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2 text-white">
-                <Sparkles className="w-3.5 h-3.5 text-[#f0a93a]" />
-                <span className="font-semibold">{scrollPercent}%</span>
-              </div>
-            </div>
+            {/* Minimal Ghost Next Chevron */}
+            <button
+              type="button"
+              onClick={() => scrollToProject(activeIndex + 1)}
+              disabled={activeIndex === projectsData.length - 1}
+              aria-label="Next project"
+              className="p-1 text-white/30 hover:text-white disabled:opacity-0 transition-all duration-300 focus:outline-none cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
