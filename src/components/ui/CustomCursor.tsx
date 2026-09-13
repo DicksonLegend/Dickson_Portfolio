@@ -1,102 +1,116 @@
 import { useEffect, useRef, useState } from 'react'
-import gsap from 'gsap'
+import { createPortal } from 'react-dom'
 
 export function CustomCursor() {
+  const [mounted, setMounted] = useState(false)
   const cursorRef = useRef<HTMLDivElement>(null)
   const auraRef = useRef<HTMLDivElement>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const [isClicking, setIsClicking] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
-  const [isTouchDevice, setIsTouchDevice] = useState(true)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Only activate custom cursor on devices with fine pointer (mouse/trackpad)
-    const mediaQuery = window.matchMedia('(pointer: fine)')
-    const checkIsTouch = () => !mediaQuery.matches || 'ontouchstart' in window
+    setMounted(true)
 
-    if (checkIsTouch()) {
-      setIsTouchDevice(true)
-      return
-    }
+    const cursor = cursorRef.current
+    const aura = auraRef.current
+    const container = containerRef.current
 
-    setIsTouchDevice(false)
-    document.body.classList.add('has-custom-cursor')
+    if (!cursor || !aura || !container) return
 
-    const cursorEl = cursorRef.current
-    const auraEl = auraRef.current
-
-    if (!cursorEl || !auraEl) return
-
-    // Position setters with GSAP quickTo for 120fps silky smooth physics
-    const xTo = gsap.quickTo(cursorEl, 'x', { duration: 0.1, ease: 'power3.out' })
-    const yTo = gsap.quickTo(cursorEl, 'y', { duration: 0.1, ease: 'power3.out' })
-    
-    // Trailing aura follows with slight inertia
-    const auraXTo = gsap.quickTo(auraEl, 'x', { duration: 0.32, ease: 'power2.out' })
-    const auraYTo = gsap.quickTo(auraEl, 'y', { duration: 0.32, ease: 'power2.out' })
-
+    let mouseX = -100
+    let mouseY = -100
+    let cursorX = -100
+    let cursorY = -100
+    let auraX = -100
+    let auraY = -100
     let lastX = 0
-    let lastY = 0
+    let currentTilt = 0
+    let targetTilt = 0
+    let isVisible = false
+    let isHovered = false
+    let isDown = false
+    let rafId: number
 
-    const onMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e
-      
-      if (!isVisible) setIsVisible(true)
+    // Render loop with lerp for silky smooth 120fps motion
+    const render = () => {
+      if (isVisible) {
+        // Main cursor follows quickly (crisp & snappy: lerp 0.6)
+        cursorX += (mouseX - cursorX) * 0.6
+        cursorY += (mouseY - cursorY) * 0.6
 
-      // Update cursor position directly to mouse tip (0, 0 hotspot)
-      xTo(clientX)
-      yTo(clientY)
+        // Trailing aura follows with soft liquid inertia (lerp 0.18)
+        auraX += (mouseX - auraX) * 0.18
+        auraY += (mouseY - auraY) * 0.18
 
-      // Aura centered around the click point with gentle lag
-      auraXTo(clientX)
-      auraYTo(clientY)
+        // Velocity tilt
+        currentTilt += (targetTilt - currentTilt) * 0.15
 
-      // Subtle dynamic tilt based on mouse velocity
-      const vx = clientX - lastX
-      const vy = clientY - lastY
-      const speed = Math.hypot(vx, vy)
-      
-      if (speed > 1.5) {
-        const tilt = Math.max(-14, Math.min(14, (vx * 0.4)))
-        gsap.to(cursorEl, {
-          rotation: tilt,
-          duration: 0.2,
-          ease: 'power1.out',
-          overwrite: 'auto',
-        })
-      } else {
-        gsap.to(cursorEl, {
-          rotation: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        })
+        const scale = isDown ? 0.82 : isHovered ? 1.22 : 1.0
+        const auraScale = isDown ? 0.6 : isHovered ? 1.8 : 1.0
+
+        // Direct GPU transforms
+        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) rotate(${currentTilt}deg) scale(${scale})`
+        aura.style.transform = `translate3d(${auraX}px, ${auraY}px, 0) scale(${auraScale})`
       }
 
-      lastX = clientX
-      lastY = clientY
+      rafId = requestAnimationFrame(render)
+    }
 
-      // Check if hovering over interactive elements
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX
+      mouseY = e.clientY
+
+      if (!isVisible) {
+        isVisible = true
+        cursorX = mouseX
+        cursorY = mouseY
+        auraX = mouseX
+        auraY = mouseY
+        container.style.opacity = '1'
+        document.body.classList.add('has-custom-cursor')
+      }
+
+      // Calculate movement velocity for dynamic tilt
+      const vx = e.clientX - lastX
+      targetTilt = Math.max(-14, Math.min(14, vx * 0.45))
+      lastX = e.clientX
+
+      // Check if hovering interactive elements
       const target = e.target as HTMLElement | null
       if (target) {
         const interactive = target.closest(
           'a, button, [role="button"], input, select, textarea, label, [data-interactive="true"], .cursor-pointer'
         )
-        setIsHovered(!!interactive)
+        if (!!interactive !== isHovered) {
+          isHovered = !!interactive
+          if (isHovered) {
+            aura.style.opacity = '0.85'
+          } else {
+            aura.style.opacity = '0.45'
+          }
+        }
       }
     }
 
-    const onMouseDown = () => setIsClicking(true)
-    const onMouseUp = () => setIsClicking(false)
+    const onMouseDown = () => {
+      isDown = true
+    }
+
+    const onMouseUp = () => {
+      isDown = false
+    }
 
     const onMouseLeave = () => {
-      setIsVisible(false)
-      setIsHovered(false)
+      isVisible = false
+      container.style.opacity = '0'
     }
 
     const onMouseEnter = () => {
-      setIsVisible(true)
+      isVisible = true
+      container.style.opacity = '1'
     }
+
+    // Start RAF loop
+    rafId = requestAnimationFrame(render)
 
     window.addEventListener('mousemove', onMouseMove, { passive: true })
     window.addEventListener('mousedown', onMouseDown)
@@ -105,6 +119,7 @@ export function CustomCursor() {
     document.addEventListener('mouseenter', onMouseEnter)
 
     return () => {
+      cancelAnimationFrame(rafId)
       document.body.classList.remove('has-custom-cursor')
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mousedown', onMouseDown)
@@ -114,59 +129,47 @@ export function CustomCursor() {
     }
   }, [])
 
-  if (isTouchDevice) {
+  if (!mounted || typeof document === 'undefined') {
     return null
   }
 
-  return (
+  // Mount directly onto document.body via Portal to escape any transformed/overflow parents
+  return createPortal(
     <div
-      className="fixed inset-0 pointer-events-none z-[99999] overflow-hidden transition-opacity duration-300"
-      style={{ opacity: isVisible ? 1 : 0 }}
+      ref={containerRef}
+      id="custom-cursor-container"
+      className="pointer-events-none fixed inset-0 z-[2147483647] overflow-visible transition-opacity duration-200"
+      style={{ opacity: 0 }}
       aria-hidden="true"
     >
-      {/* Ambient Trailing Glow / Aura */}
+      {/* Trailing Ambient Neon Aura Halo */}
       <div
         ref={auraRef}
-        className="fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-300 ease-out will-change-transform"
+        className="pointer-events-none fixed top-0 left-0 -translate-x-1/2 -translate-y-1/2 will-change-transform transition-opacity duration-300"
         style={{
-          width: '56px',
-          height: '56px',
-          transform: `translate3d(0, 0, 0) scale(${isHovered ? 1.9 : isClicking ? 0.7 : 1})`,
+          width: '54px',
+          height: '54px',
+          opacity: 0.45,
         }}
       >
-        <div
-          className={`w-full h-full rounded-full blur-md transition-all duration-300 ${
-            isHovered
-              ? 'opacity-85 scale-110 bg-gradient-to-tr from-fuchsia-500/40 via-purple-500/30 to-cyan-400/50'
-              : 'opacity-40 bg-gradient-to-tr from-purple-500/25 via-pink-500/20 to-cyan-400/25'
-          }`}
-        />
+        <div className="w-full h-full rounded-full blur-md bg-gradient-to-tr from-fuchsia-500/50 via-purple-500/35 to-cyan-400/50" />
       </div>
 
-      {/* Main Custom Neon Arrow Pointer */}
+      {/* Main Synthwave Neon Arrow Pointer */}
       <div
         ref={cursorRef}
-        className="fixed top-0 left-0 pointer-events-none origin-top-left will-change-transform"
-        style={{
-          transform: 'translate3d(0, 0, 0)',
-        }}
+        className="pointer-events-none fixed top-0 left-0 origin-top-left will-change-transform"
       >
-        <div
-          className="transition-transform duration-200 ease-out"
-          style={{
-            transform: `scale(${isClicking ? 0.84 : isHovered ? 1.18 : 1})`,
-          }}
-        >
-          <img
-            src="/cursor/custom-cursor.png"
-            alt=""
-            width={34}
-            height={34}
-            className="w-[34px] h-[34px] select-none pointer-events-none drop-shadow-[0_2px_10px_rgba(217,70,239,0.55)]"
-            draggable={false}
-          />
-        </div>
+        <img
+          src="/cursor/custom-cursor.png"
+          alt=""
+          width={34}
+          height={34}
+          className="w-[34px] h-[34px] select-none pointer-events-none drop-shadow-[0_2px_12px_rgba(217,70,239,0.7)]"
+          draggable={false}
+        />
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
