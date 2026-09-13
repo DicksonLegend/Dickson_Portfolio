@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './context/ThemeContext'
 import { Navbar, IntroLoader } from './components/layout'
 import { Hero, About, BookSkillsSection, Statement, Projects } from './components/sections'
+import { CustomCursor } from './components/ui'
 import { useScrollSpy } from './hooks/useScrollSpy'
 import { RotateCcw } from 'lucide-react'
 
@@ -12,7 +13,11 @@ export function AppContent() {
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] overflow-x-hidden selection:bg-[var(--accent)] selection:text-black transition-colors duration-400">
+      {/* Custom Modern Animated Cursor */}
+      <CustomCursor />
+
       {/* 3D Spiral Particle Loading Screen */}
+
       <AnimatePresence>
         {showIntro && (
           <IntroLoader

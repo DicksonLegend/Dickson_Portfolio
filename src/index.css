@@ -131,3 +131,16 @@ body {
     transform-origin: right;
   }
 }
+
+/* Custom Neon Cursor Styles */
+@media (pointer: fine) {
+  body {
+    cursor: url('/cursor/cursor-32.png') 0 0, auto;
+  }
+
+  body.has-custom-cursor,
+  body.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
