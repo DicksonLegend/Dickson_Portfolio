@@ -87,29 +87,31 @@ export const Projects: React.FC = () => {
     track.style.paddingLeft = `${padLeft}px`
     track.style.paddingRight = `${padRight}px`
 
-    const tween = gsap.to(track, {
-      x: -totalDist,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
-        pin: pinEl,
-        pinSpacing: true,
-        scrub: 1.2, // Momentum-smoothed scrub for buttery mousewheel and trackpad feel
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const currentX = -self.progress * totalDist
-          updateCardTransforms(currentX, pitch, cardW)
-        },
-        onRefresh: (self) => {
-          const currentX = -self.progress * totalDist
-          updateCardTransforms(currentX, pitch, cardW)
-        },
+    const END_BUFFER = 0.86 // Card 12 reaches center and rests stationary for the final 14% of scroll
+
+    const trigger = ScrollTrigger.create({
+      trigger: section,
+      start: 'top top',
+      end: 'bottom bottom',
+      pin: pinEl,
+      pinSpacing: true,
+      scrub: 1.0, // Momentum-smoothed scrub for buttery mousewheel and trackpad feel
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const scrubProgress = Math.min(1, self.progress / END_BUFFER)
+        const currentX = -scrubProgress * totalDist
+        track.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`
+        updateCardTransforms(currentX, pitch, cardW)
+      },
+      onRefresh: (self) => {
+        const scrubProgress = Math.min(1, self.progress / END_BUFFER)
+        const currentX = -scrubProgress * totalDist
+        track.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`
+        updateCardTransforms(currentX, pitch, cardW)
       },
     })
 
-    scrollTriggerRef.current = tween.scrollTrigger || null
+    scrollTriggerRef.current = trigger
     updateCardTransforms(0, pitch, cardW)
 
     // Force refresh to ensure all preceding sections and pin spacers are calibrated
@@ -119,8 +121,7 @@ export const Projects: React.FC = () => {
 
     return () => {
       clearTimeout(refreshTimer)
-      tween.scrollTrigger?.kill()
-      tween.kill()
+      trigger.kill()
     }
   }, [updateCardTransforms])
 
@@ -129,8 +130,9 @@ export const Projects: React.FC = () => {
     const trigger = scrollTriggerRef.current
     if (!trigger) return
 
+    const END_BUFFER = 0.86
     const clamped = Math.max(0, Math.min(projectsData.length - 1, targetIndex))
-    const targetProgress = clamped / (projectsData.length - 1)
+    const targetProgress = (clamped / (projectsData.length - 1)) * END_BUFFER
     const targetScrollY = trigger.start + targetProgress * (trigger.end - trigger.start)
 
     window.scrollTo({
@@ -146,7 +148,7 @@ export const Projects: React.FC = () => {
       ref={sectionRef}
       id="projects"
       aria-label="Selected Works and Flagship Projects"
-      className="relative h-[480vh] w-full bg-[#060c0e] text-[var(--text)] select-none"
+      className="relative h-[500vh] w-full bg-[#060c0e] text-[var(--text)] select-none"
     >
       {/* Waveform living pulse CSS animation */}
       <style>{`
