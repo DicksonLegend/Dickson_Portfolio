@@ -1,4 +1,5 @@
 export * from './Hero'
 export * from './About'
 export * from './BookSkillsSection'
+export * from './Statement'
 export * from './Projects'

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './context/ThemeContext'
 import { Navbar, IntroLoader } from './components/layout'
-import { Hero, About, BookSkillsSection, Projects } from './components/sections'
+import { Hero, About, BookSkillsSection, Statement, Projects } from './components/sections'
 import { useScrollSpy } from './hooks/useScrollSpy'
 import { RotateCcw } from 'lucide-react'
 
@@ -40,6 +40,7 @@ export function AppContent() {
               <Hero />
               <About />
               <BookSkillsSection />
+              <Statement />
               <Projects />
             </main>
 
