@@ -3,13 +3,15 @@ export interface Project {
   title: string
   tagline: string
   description: string
-  category: 'LLMs & Agents' | 'Computer Vision' | 'ML Systems' | 'Research'
+  category: string
   tags: string[]
   metrics?: { label: string; value: string }[]
   demoUrl?: string
   githubUrl?: string
   paperUrl?: string
   featured?: boolean
+  accentColor?: string
+  feelWord?: string
 }
 
 export interface Experience {
