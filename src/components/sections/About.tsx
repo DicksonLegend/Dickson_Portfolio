@@ -84,7 +84,7 @@ export const About: React.FC = () => {
     <section
       id="about"
       aria-label="About Dickson E"
-      className="relative min-h-screen w-full bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 py-24 md:py-32 border-t border-[var(--border-subtle)] overflow-hidden select-none"
+      className="relative min-h-screen w-full bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 px-6 md:px-16 lg:px-24 py-24 md:py-32 border-t border-[var(--border-subtle)] overflow-hidden select-none"
     >
       {/* Background Decorative Grid Accent */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#00e5ff_1px,transparent_1px)] [background-size:24px_24px]" />

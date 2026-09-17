@@ -174,7 +174,7 @@ export const Projects: React.FC = () => {
         {/* =========================================================================
             1. TOP HEADER: "Engineered to be [word]."
             ========================================================================= */}
-        <div className="relative z-20 w-full px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
+        <div className="relative z-20 w-full px-6 md:px-16 lg:px-24 pointer-events-none">
           <div className="max-w-5xl">
             {/* Category / Counter Eyebrow */}
             <div className="flex items-center gap-3 mb-2">

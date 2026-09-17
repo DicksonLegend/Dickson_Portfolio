@@ -12,7 +12,7 @@ export const Statement: React.FC = () => {
       className="relative min-h-[115vh] w-full bg-[#060c0e] text-[var(--text)] flex flex-col justify-between pt-20 pb-16 md:pt-28 md:pb-24 select-none overflow-hidden"
     >
       {/* 1. Top Small Text: "From wonder to working code." in refined upright Newsreader serif */}
-      <div className="w-full px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 text-center z-10 mb-8 sm:mb-12 md:mb-16">
+      <div className="w-full px-6 md:px-16 lg:px-24 text-center z-10 mb-8 sm:mb-12 md:mb-16">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -31,7 +31,7 @@ export const Statement: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         transition={{ staggerChildren: 0.15 }}
-        className="my-auto w-full px-4 sm:px-8 md:pl-24 lg:pl-28 pr-4 sm:pr-8 md:pr-8 text-center flex flex-col items-center justify-center z-10"
+        className="my-auto w-full px-4 sm:px-8 md:px-16 lg:px-24 text-center flex flex-col items-center justify-center z-10"
       >
         <h2
           className="w-full uppercase text-white font-bold tracking-[-0.04em] leading-[0.87] select-none text-[clamp(40px,7.4vw,150px)]"
@@ -73,7 +73,7 @@ export const Statement: React.FC = () => {
       </motion.div>
 
       {/* 3. Bottom Minimal Transition Cue */}
-      <div className="w-full px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 text-center z-10 mt-8 sm:mt-12 md:mt-16">
+      <div className="w-full px-6 md:px-16 lg:px-24 text-center z-10 mt-8 sm:mt-12 md:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}

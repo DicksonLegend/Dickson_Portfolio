@@ -27,7 +27,7 @@ export const Hero: React.FC = () => {
     <section
       id="hero"
       aria-label="Hero Introduction"
-      className="relative min-h-[100dvh] w-full flex items-center overflow-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 select-none"
+      className="relative min-h-[100dvh] w-full flex items-center overflow-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-400 px-6 md:px-16 lg:px-24 pt-16 select-none"
     >
       {/* 1. Fullscreen 3D WebGL Organic Displacement Mesh Canvas */}
       <DisplacementMesh />

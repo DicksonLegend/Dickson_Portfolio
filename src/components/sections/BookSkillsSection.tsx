@@ -661,7 +661,7 @@ export const BookSkillsSection: React.FC = () => {
           className="relative w-full h-full flex flex-col justify-between overflow-hidden bg-[#0a1315] will-change-transform origin-center"
         >
           {/* Top 2D HTML Header Overlay (z-index: 10) */}
-          <div className="relative z-10 w-full pt-8 md:pt-12 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 pointer-events-none">
+          <div className="relative z-10 w-full pt-8 md:pt-12 px-6 md:px-16 lg:px-24 pointer-events-none">
             <div className="max-w-4xl">
             {/* Subheading in mono font with Jade color (#3fae8e) */}
             <div className="flex items-center gap-3 mb-2">
@@ -739,7 +739,7 @@ export const BookSkillsSection: React.FC = () => {
         )}
 
         {/* Bottom Interactive Scroll Progress HUD */}
-        <div className="relative z-10 w-full pb-8 px-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 flex items-center justify-between pointer-events-none">
+        <div className="relative z-10 w-full pb-8 px-6 md:px-16 lg:px-24 flex items-center justify-between pointer-events-none">
           <div className="flex items-center gap-3 font-mono text-xs text-[var(--textLight)]">
             <span className="w-2 h-2 rounded-full bg-[#f0a93a] animate-ping" />
             <span className="hidden sm:inline">KNOWLEDGE_VAULT //</span>

@@ -50,7 +50,7 @@ export function AppContent() {
             </main>
 
             {/* Footer with Replay Option */}
-            <footer className="w-full py-8 border-t border-[var(--border-subtle)] pl-6 md:pl-28 lg:pl-36 pr-6 md:pr-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[var(--text-faint)]">
+            <footer className="w-full py-8 border-t border-[var(--border-subtle)] px-6 md:px-16 lg:px-20 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[var(--text-faint)]">
               <span>© {new Date().getFullYear()} DICKSON E · ALL RIGHTS RESERVED</span>
               <button
                 onClick={() => setShowIntro(true)}
