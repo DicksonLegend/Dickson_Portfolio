@@ -163,7 +163,7 @@ const HACKATHONS: HackathonItem[] = [
   },
 ]
 
-const DIVIDER_WORDS = ['LEARNED', 'EARNED', 'BUILT', 'SHIPPED', 'REPEAT']
+const DIVIDER_WORDS = ['LEARNED', 'EARNED', 'BUILT', 'SHIPPED', 'EVOLVED', 'PROVED', 'REPEAT']
 
 const ITEM_HEIGHT = 48
 

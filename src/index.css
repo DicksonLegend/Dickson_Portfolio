@@ -327,7 +327,7 @@ body.cert-modal-open header {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: marqueeLeft 28s linear infinite;
+  animation: marqueeLeft 34s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
