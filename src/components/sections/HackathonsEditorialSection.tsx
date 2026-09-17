@@ -192,6 +192,8 @@ export const HackathonsEditorialSection: React.FC = () => {
     }
   }, [])
 
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null)
+
   // Manage modal state: lock background scroll, hide floating navbar, and allow Escape to close
   useEffect(() => {
     if (selectedModalCert) {
@@ -223,49 +225,80 @@ export const HackathonsEditorialSection: React.FC = () => {
     const totalItems = HACKATHONS.length
     const totalDistance = (totalItems - 1) * ITEM_HEIGHT
 
+    // Initial position based on activeIndex
+    gsap.set(listRef.current, {
+      y: -(activeIndex * ITEM_HEIGHT),
+    })
+
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          pin: stageRef.current,
-          anticipatePin: 1,
-          scrub: 0.4, // Buttery smooth lag-behind lerp scrub for physical weight
-          onUpdate: (self) => {
-            // Continuously map scroll progress to active index [0..5]
-            const rawProgress = self.progress * (totalItems - 1)
-            const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
-            setActiveIndex(currentIdx)
-          },
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        pin: stageRef.current,
+        anticipatePin: 1,
+        scrub: 0.3,
+        onUpdate: (self) => {
+          const rawProgress = self.progress * (totalItems - 1)
+          const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
+          setActiveIndex(currentIdx)
+
+          // Continuous vertical translation
+          if (listRef.current) {
+            gsap.set(listRef.current, {
+              y: -self.progress * totalDistance,
+            })
+          }
         },
       })
 
-      // Continuous linear list translation - moves on every single scroll pixel!
-      tl.to(listRef.current, {
-        y: -totalDistance,
-        ease: 'none',
-        duration: 1,
-      })
+      scrollTriggerRef.current = st
     }, containerRef)
 
-    return () => ctx.revert()
+    ScrollTrigger.refresh()
+
+    return () => {
+      scrollTriggerRef.current = null
+      ctx.revert()
+    }
   }, [prefersReducedMotion])
 
-  // Handle clicking a specific numbered item
+  // Handle clicking a specific numbered item: smooth glide list and scroll window
   const handleItemClick = (index: number) => {
     setActiveIndex(index)
     if (!containerRef.current || prefersReducedMotion) return
 
     const totalItems = HACKATHONS.length
-    const containerTop = containerRef.current.offsetTop
-    const containerHeight = containerRef.current.offsetHeight - window.innerHeight
-    const targetScroll = containerTop + (index / (totalItems - 1)) * containerHeight
+    const targetY = -(index * ITEM_HEIGHT)
 
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth',
-    })
+    // Immediately glide the list element smoothly to the clicked item
+    if (listRef.current) {
+      gsap.to(listRef.current, {
+        y: targetY,
+        duration: 0.45,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      })
+    }
+
+    // Accurately scroll the window to the exact ScrollTrigger scroll position
+    const st = scrollTriggerRef.current
+    if (st) {
+      const progress = index / (totalItems - 1)
+      const targetScroll = st.start + progress * (st.end - st.start)
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      })
+    } else {
+      const containerTop = containerRef.current.offsetTop
+      const containerHeight = containerRef.current.offsetHeight - window.innerHeight
+      const targetScroll = containerTop + (index / (totalItems - 1)) * containerHeight
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      })
+    }
   }
 
   const currentHackathon = HACKATHONS[activeIndex] || HACKATHONS[0]
@@ -305,7 +338,7 @@ export const HackathonsEditorialSection: React.FC = () => {
           <div className="w-full h-24 sm:h-28 md:h-32 relative pointer-events-none" />
 
           {/* Horizontal Crisp Black Dividing Rule (Separates past scrolled items from active items) */}
-          <div className="w-full border-t border-black relative z-10" />
+          <div className="w-full border-t border-black relative z-30 pointer-events-none" />
 
           {/* Lower Active Area: Active item directly under the line + upcoming items + image & tags */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pt-3 sm:pt-4 items-start min-h-[260px] relative z-20">
@@ -328,8 +361,7 @@ export const HackathonsEditorialSection: React.FC = () => {
               <div
                 className="relative overflow-visible"
                 style={{
-                  // Smoothly clip past items if they scroll higher than 144px above the line
-                  clipPath: 'inset(-144px 0 0 0)',
+                  clipPath: 'inset(-200px 0 0 0)',
                 }}
               >
                 <div

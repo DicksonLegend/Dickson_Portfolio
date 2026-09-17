@@ -196,6 +196,8 @@ export const CoursesEditorialSection: React.FC = () => {
     }
   }, [])
 
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null)
+
   // Manage modal state: lock background scroll, hide floating navbar, and allow Escape to close
   useEffect(() => {
     if (selectedModalCert) {
@@ -227,51 +229,82 @@ export const CoursesEditorialSection: React.FC = () => {
     const totalItems = COURSE_CERTS.length
     const totalDistance = (totalItems - 1) * ITEM_HEIGHT
 
+    // Initial position based on activeIndex
+    gsap.set(listRef.current, {
+      y: -(activeIndex * ITEM_HEIGHT),
+    })
+
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          pin: stageRef.current,
-          anticipatePin: 1,
-          scrub: 0.4, // Buttery smooth lag-behind lerp scrub for physical weight
-          onUpdate: (self) => {
-            const rawProgress = self.progress * (totalItems - 1)
-            const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
-            setActiveIndex(currentIdx)
-          },
+      const st = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        pin: stageRef.current,
+        anticipatePin: 1,
+        scrub: 0.3,
+        onUpdate: (self) => {
+          const rawProgress = self.progress * (totalItems - 1)
+          const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
+          setActiveIndex(currentIdx)
+
+          // Continuous vertical translation: active item stays right under the line,
+          // and previous items smoothly slide up past the black line into the buffer space
+          if (listRef.current) {
+            gsap.set(listRef.current, {
+              y: -self.progress * totalDistance,
+            })
+          }
         },
       })
 
-      // Continuous vertical translation of the items list without inline style overrides
-      tl.to(listRef.current, {
-        y: -totalDistance,
-        ease: 'none',
-        duration: 1,
-      })
+      scrollTriggerRef.current = st
     }, containerRef)
 
     // Ensure ScrollTrigger accurately accounts for the preceding pinned hackathon section
     ScrollTrigger.refresh()
 
-    return () => ctx.revert()
+    return () => {
+      scrollTriggerRef.current = null
+      ctx.revert()
+    }
   }, [prefersReducedMotion])
 
-  // Handle clicking a specific numbered item
+  // Handle clicking a specific numbered item: smooth glide list and scroll window
   const handleItemClick = (index: number) => {
     setActiveIndex(index)
     if (!containerRef.current || prefersReducedMotion) return
 
     const totalItems = COURSE_CERTS.length
-    const containerTop = containerRef.current.offsetTop
-    const containerHeight = containerRef.current.offsetHeight - window.innerHeight
-    const targetScroll = containerTop + (index / (totalItems - 1)) * containerHeight
+    const targetY = -(index * ITEM_HEIGHT)
 
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth',
-    })
+    // Immediately glide the list element smoothly to the clicked item
+    if (listRef.current) {
+      gsap.to(listRef.current, {
+        y: targetY,
+        duration: 0.45,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      })
+    }
+
+    // Accurately scroll the window to the exact ScrollTrigger scroll position
+    const st = scrollTriggerRef.current
+    if (st) {
+      const progress = index / (totalItems - 1)
+      const targetScroll = st.start + progress * (st.end - st.start)
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      })
+    } else {
+      const containerTop = containerRef.current.offsetTop
+      const containerHeight = containerRef.current.offsetHeight - window.innerHeight
+      const targetScroll = containerTop + (index / (totalItems - 1)) * containerHeight
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      })
+    }
   }
 
   const currentCert = COURSE_CERTS[activeIndex] || COURSE_CERTS[0]
@@ -311,7 +344,7 @@ export const CoursesEditorialSection: React.FC = () => {
           <div className="w-full h-24 sm:h-28 md:h-32 relative pointer-events-none" />
 
           {/* Horizontal Crisp Black Dividing Rule */}
-          <div className="w-full border-t border-black relative z-10" />
+          <div className="w-full border-t border-black relative z-30 pointer-events-none" />
 
           {/* Mirrored Layout:
               - Left side (Cols 1-5): Description Tags on extreme left + Compact Certificate Preview Image
@@ -394,15 +427,12 @@ export const CoursesEditorialSection: React.FC = () => {
 
             </div>
 
-            {/* Middle Breathing Room / Spacer Column */}
-            <div className="hidden md:block md:col-span-1 pointer-events-none" />
-
-            {/* Mirrored Right Column (Cols 7-10): Scrolling Course Titles Track */}
-            <div className="col-span-12 md:col-span-4 relative">
+            {/* Mirrored Right Column (Cols 6-10): Scrolling Course Titles Track */}
+            <div className="col-span-12 md:col-span-5 relative">
               <div
                 className="relative overflow-visible"
                 style={{
-                  clipPath: 'inset(-144px 0 0 0)',
+                  clipPath: 'inset(-200px 0 0 0)',
                 }}
               >
                 <div
@@ -442,7 +472,7 @@ export const CoursesEditorialSection: React.FC = () => {
 
                         {/* Title Text */}
                         <span
-                          className={`font-sans tracking-tight transition-colors truncate ${
+                          className={`font-sans tracking-tight transition-colors whitespace-nowrap ${
                             isActive
                               ? 'font-extrabold text-2xl sm:text-3xl md:text-4xl text-black drop-shadow-sm'
                               : 'font-medium text-xl sm:text-2xl md:text-3xl'
