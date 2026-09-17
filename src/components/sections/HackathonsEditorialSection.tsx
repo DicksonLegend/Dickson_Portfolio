@@ -172,11 +172,12 @@ const PARTNER_LOGOS = [
   'NVIDIA DLI',
 ]
 
-const ITEM_HEIGHT = 44
+const ITEM_HEIGHT = 48
 
 export const HackathonsEditorialSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedModalCert, setSelectedModalCert] = useState<HackathonItem | null>(null)
 
@@ -198,28 +199,37 @@ export const HackathonsEditorialSection: React.FC = () => {
     }
   }, [])
 
-  // GSAP ScrollTrigger pinning for the editorial scrub
+  // Continuous, buttery-smooth GSAP ScrollTrigger timeline
   useEffect(() => {
     if (prefersReducedMotion) return
-    if (!containerRef.current || !stageRef.current) return
+    if (!containerRef.current || !stageRef.current || !listRef.current) return
 
     const totalItems = HACKATHONS.length
+    const totalDistance = (totalItems - 1) * ITEM_HEIGHT
 
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        pin: stageRef.current,
-        anticipatePin: 1,
-        scrub: 0.35,
-        onUpdate: (self) => {
-          // Map scroll progress to active index [0..5]
-          const progress = self.progress
-          const rawIndex = Math.floor(progress * totalItems)
-          const clampedIndex = Math.min(totalItems - 1, Math.max(0, rawIndex))
-          setActiveIndex(clampedIndex)
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: stageRef.current,
+          anticipatePin: 1,
+          scrub: 0.4, // Buttery smooth lag-behind lerp scrub for physical weight
+          onUpdate: (self) => {
+            // Continuously map scroll progress to active index [0..5]
+            const rawProgress = self.progress * (totalItems - 1)
+            const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
+            setActiveIndex(currentIdx)
+          },
         },
+      })
+
+      // Continuous linear list translation - moves on every single scroll pixel!
+      tl.to(listRef.current, {
+        y: -totalDistance,
+        ease: 'none',
+        duration: 1,
       })
     }, containerRef)
 
@@ -251,81 +261,41 @@ export const HackathonsEditorialSection: React.FC = () => {
       aria-label="Hackathons and Arena Battle Records"
       className="relative w-full bg-white text-black select-none transition-colors duration-400"
       style={{
-        height: prefersReducedMotion ? 'auto' : '380vh',
+        height: prefersReducedMotion ? 'auto' : '300vh',
       }}
     >
       {/* Pinned Stage Canvas (Pure White, stark black high-fashion editorial) */}
       <div
         ref={stageRef}
-        className="relative w-full h-screen min-h-[700px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden"
+        className="relative w-full h-screen min-h-[680px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden"
       >
-        {/* Top Area: Clean 2-Line Headline (Exact user request: "FROM PROMPTS TO PRODUCTION. PROVEN UNDER PRESSURE.") */}
-        <div className="w-full pt-12 sm:pt-14 md:pt-16">
+        {/* Top Area: Large Impact Headline with tight leading */}
+        <div className="w-full pt-10 sm:pt-14 md:pt-16">
           <h2
-            className="w-full uppercase text-black font-bold tracking-[-0.04em] leading-[0.88] select-none text-[clamp(28px,4.5vw,62px)]"
+            className="w-full uppercase text-black font-bold tracking-[-0.04em] leading-[0.84] select-none text-[clamp(32px,5.2vw,76px)]"
             style={{
               fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             }}
           >
             <span className="block">FROM PROMPTS TO PRODUCTION.</span>
-            <span className="block">PROVEN UNDER PRESSURE.</span>
+            <span className="block mt-1 sm:mt-1.5">PROVEN UNDER PRESSURE.</span>
           </h2>
         </div>
 
         {/* Center Interactive Layout (Separated by the horizontal black border line) */}
         <div className="relative w-full my-auto">
           
-          {/* UPPER SPACE (between headline and horizontal line): Past items float here */}
-          <div className="w-full h-24 sm:h-28 md:h-32 overflow-hidden relative">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 h-full items-end pb-1.5 sm:pb-2">
-              <div className="hidden md:block md:col-span-2" />
-
-              {/* Past items rendered in muted gray above the line */}
-              <div className="col-span-12 md:col-span-5 h-full overflow-hidden flex flex-col justify-end [mask-image:linear-gradient(to_bottom,transparent_0%,black_35%,black_100%)]">
-                <div
-                  className="flex flex-col transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{
-                    transform: `translateY(${-Math.max(0, activeIndex - 3) * ITEM_HEIGHT}px)`,
-                  }}
-                >
-                  {HACKATHONS.map((item, idx) => {
-                    if (idx >= activeIndex) return null
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleItemClick(idx)}
-                        className="h-[44px] flex items-baseline gap-4 text-left transition-colors cursor-pointer group"
-                      >
-                        <span className="font-sans font-bold text-xl sm:text-2xl text-neutral-300 group-hover:text-neutral-500">
-                          {item.number}
-                        </span>
-                        <span
-                          className="font-sans font-medium text-xl sm:text-2xl text-neutral-300 group-hover:text-neutral-500 tracking-tight"
-                          style={{
-                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                          }}
-                        >
-                          {item.shortTitle}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="hidden md:block md:col-span-5" />
-            </div>
-          </div>
+          {/* Buffer space above line (where items float when scrolled up) */}
+          <div className="w-full h-24 sm:h-28 md:h-32 relative pointer-events-none" />
 
           {/* Horizontal Crisp Black Dividing Rule (Separates past scrolled items from active items) */}
-          <div className="w-full border-t border-black" />
+          <div className="w-full border-t border-black relative z-10" />
 
-          {/* LOWER ACTIVE AREA: Sits directly under the line (Active item, upcoming items, image, tags) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pt-3 sm:pt-4 items-start min-h-[260px]">
+          {/* Lower Active Area: Active item directly under the line + upcoming items + image & tags */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pt-3 sm:pt-4 items-start min-h-[260px] relative z-20">
             
             {/* Column 1: Section Label ("Our services" -> "Our hackathons") */}
-            <div className="col-span-12 md:col-span-2 pt-1">
+            <div className="col-span-12 md:col-span-2 pt-0.5">
               <span
                 className="text-xs sm:text-sm text-neutral-800 font-medium tracking-tight block"
                 style={{
@@ -336,53 +306,68 @@ export const HackathonsEditorialSection: React.FC = () => {
               </span>
             </div>
 
-            {/* Column 2: Active Hackathon (Directly under the line) + Upcoming items */}
-            <div className="col-span-12 md:col-span-5 flex flex-col">
-              {/* Active Hackathon: Bold, Prominent Black Typography */}
-              <div className="h-[46px] flex items-baseline gap-4 pt-0.5">
-                <span
-                  className="font-sans font-bold text-2xl sm:text-3xl md:text-4xl text-black"
-                  style={{
-                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                  }}
+            {/* Column 2: Continuous Gliding List spanning across the horizontal line */}
+            <div className="col-span-12 md:col-span-5 relative">
+              {/* List container allows upward overflow so past items float above the line */}
+              <div
+                className="relative overflow-visible"
+                style={{
+                  // Smoothly clip past items if they scroll higher than 144px above the line
+                  clipPath: 'inset(-144px 0 0 0)',
+                }}
+              >
+                <div
+                  ref={listRef}
+                  className="flex flex-col will-change-transform"
                 >
-                  {currentHackathon.number}
-                </span>
-                <span
-                  className="font-sans font-extrabold text-2xl sm:text-3xl md:text-4xl text-black tracking-tight"
-                  style={{
-                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                  }}
-                >
-                  {currentHackathon.shortTitle}
-                </span>
-              </div>
+                  {HACKATHONS.map((item, idx) => {
+                    const isActive = activeIndex === idx
+                    const isPast = idx < activeIndex
 
-              {/* Upcoming Items (Stacked below active item in muted light gray) */}
-              <div className="flex flex-col">
-                {HACKATHONS.map((item, idx) => {
-                  if (idx <= activeIndex) return null
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleItemClick(idx)}
-                      className="h-[44px] flex items-baseline gap-4 text-left transition-colors cursor-pointer group opacity-35 hover:opacity-75"
-                    >
-                      <span className="font-sans font-bold text-xl sm:text-2xl text-neutral-400">
-                        {item.number}
-                      </span>
-                      <span
-                        className="font-sans font-medium text-xl sm:text-2xl text-neutral-400 tracking-tight"
-                        style={{
-                          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-                        }}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleItemClick(idx)}
+                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none cursor-pointer ${
+                          isActive
+                            ? 'text-black opacity-100 scale-100'
+                            : isPast
+                            ? 'text-neutral-300 hover:text-neutral-500 opacity-40 hover:opacity-80 scale-[0.98]'
+                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98]'
+                        }`}
                       >
-                        {item.shortTitle}
-                      </span>
-                    </button>
-                  )
-                })}
+                        {/* Number */}
+                        <span
+                          className={`font-sans transition-colors ${
+                            isActive
+                              ? 'font-bold text-2xl sm:text-3xl md:text-4xl text-black'
+                              : 'font-medium text-xl sm:text-2xl md:text-3xl'
+                          }`}
+                          style={{
+                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                          }}
+                        >
+                          {item.number}
+                        </span>
+
+                        {/* Title */}
+                        <span
+                          className={`font-sans tracking-tight transition-colors ${
+                            isActive
+                              ? 'font-extrabold text-2xl sm:text-3xl md:text-4xl text-black drop-shadow-sm'
+                              : 'font-medium text-xl sm:text-2xl md:text-3xl'
+                          }`}
+                          style={{
+                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                          }}
+                        >
+                          {item.shortTitle}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 
@@ -397,7 +382,7 @@ export const HackathonsEditorialSection: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                    transition={{ duration: 0.28, ease: 'easeOut' }}
                     className="relative rounded-xl overflow-hidden bg-neutral-50 border border-neutral-200 shadow-[0_16px_36px_rgba(0,0,0,0.08)] cursor-pointer"
                     onClick={() => setSelectedModalCert(currentHackathon)}
                   >
@@ -428,7 +413,7 @@ export const HackathonsEditorialSection: React.FC = () => {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.28, ease: 'easeOut' }}
+                    transition={{ duration: 0.26, ease: 'easeOut' }}
                     className="space-y-1.5"
                   >
                     {currentHackathon.tags.map((tag) => (
