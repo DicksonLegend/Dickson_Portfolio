@@ -18,6 +18,10 @@ export function AppContent() {
 
       {/* 3D Spiral Particle Loading Screen */}
 
+      {/* Floating Pill Dock Navigation (Fixed permanently at viewport top) */}
+      {!showIntro && <Navbar activeSection={activeSection} />}
+
+      {/* 3D Spiral Particle Loading Screen */}
       <AnimatePresence>
         {showIntro && (
           <IntroLoader
@@ -37,9 +41,6 @@ export function AppContent() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="relative w-full"
           >
-            {/* Left Vertical Navigation & Top Theme Toggle */}
-            <Navbar activeSection={activeSection} />
-
             {/* Main Sections Flow */}
             <main id="main-content" className="relative z-10 w-full">
               <Hero />

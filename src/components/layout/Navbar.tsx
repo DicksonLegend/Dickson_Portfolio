@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import {
@@ -107,13 +108,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
     },
   ]
 
-  return (
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
     <>
       {/* Fixed Top Header Container */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-12 py-4 pointer-events-none select-none">
         
         {/* Left: Brand Monogram (Modern Stylized 'NK' style for Dickson) */}
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto z-10">
           <a
             href="#hero"
             className="group relative flex items-center gap-2 focus:outline-none"
@@ -136,10 +139,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
         </div>
 
         {/* Center: Exact Floating Pill Dock Navigation */}
-        <nav
-          aria-label="Primary Navigation"
-          className="pointer-events-auto hidden md:inline-flex items-center gap-1 rounded-full border border-white/10 bg-[#0c0e12]/85 backdrop-blur-2xl p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/5"
-        >
+        <div className="absolute left-1/2 -translate-x-1/2 top-4 pointer-events-none">
+          <nav
+            aria-label="Primary Navigation"
+            className="pointer-events-auto hidden md:inline-flex items-center gap-1 rounded-full border border-white/10 bg-[#0c0e12]/85 backdrop-blur-2xl p-1.5 shadow-[0_12px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/5"
+          >
           {navItems.map((item) => {
             const isActive = activeSection === item.id
 
@@ -261,9 +265,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
             <span>Book a Call</span>
           </a>
         </nav>
+        </div>
 
         {/* Right: Command Shortcut Badge (⌘) + Theme Switcher */}
-        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
+        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3 z-10">
           {/* ⌘ Key Shortcut Trigger */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
@@ -343,7 +348,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
         )}
       </AnimatePresence>
 
-      {/* Quick Command Palette Modal (triggered via ⌘ button or ⌘K) */}
+      {/* Quick Command Palette Modal */}
       <AnimatePresence>
         {commandPaletteOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
@@ -430,7 +435,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
           </div>
         )}
       </AnimatePresence>
-
-    </>
+    </>,
+    document.body
   )
 }
