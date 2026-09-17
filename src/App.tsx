@@ -9,7 +9,7 @@ import { RotateCcw } from 'lucide-react'
 
 export function AppContent() {
   const [showIntro, setShowIntro] = useState(true)
-  const activeSection = useScrollSpy(['hero', 'about', 'skills', 'projects', 'contact'], 150) || 'hero'
+  const activeSection = useScrollSpy(['hero', 'about', 'skills', 'projects', 'certifications'], 150) || 'hero'
 
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)] overflow-x-hidden selection:bg-[var(--accent)] selection:text-black transition-colors duration-400">

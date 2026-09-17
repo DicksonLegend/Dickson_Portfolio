@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import {
   ChevronDown,
-  Award,
   FileText,
   Calendar,
   Search,
@@ -32,6 +31,16 @@ const LinkedinIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' 
 
 export interface NavbarProps {
   activeSection?: string
+}
+
+interface MoreItem {
+  label: string
+  description: string
+  icon: React.ComponentType<{ className?: string }>
+  href: string
+  badge?: string
+  external?: boolean
+  download?: boolean
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
@@ -70,21 +79,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
   const navItems = [
     { label: 'Home', id: 'hero', href: '#hero' },
     { label: 'About', id: 'about', href: '#about' },
-    { label: 'Work', id: 'projects', href: '#projects' },
     { label: 'Skills', id: 'skills', href: '#skills' },
+    { label: 'Work', id: 'projects', href: '#projects' },
+    { label: 'Certifications', id: 'certifications', href: '#certifications' },
   ]
 
   const githubUrl = socialLinks.find((l) => l.platform === 'github')?.url || 'https://github.com/DicksonLegend'
   const linkedinUrl = socialLinks.find((l) => l.platform === 'linkedin')?.url || 'https://linkedin.com'
 
-  const moreItems = [
-    {
-      label: 'Certifications',
-      description: '30+ Cloud, AI & Security Credentials',
-      icon: Award,
-      href: '#projects',
-      badge: '30+',
-    },
+  const moreItems: MoreItem[] = [
     {
       label: 'GitHub Profile',
       description: 'Explore repositories and open source',
@@ -105,6 +108,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
       icon: FileText,
       href: '/resume.pdf',
       download: true,
+    },
+    {
+      label: 'Direct Email',
+      description: 'Send project inquiry or message',
+      icon: Mail,
+      href: 'mailto:dicksone2006@gmail.com',
+      external: true,
     },
   ]
 
@@ -134,7 +144,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
                 <path d="M7 6h7c5 0 9 3.5 9 10s-4 10-9 10H7V6zm4.5 4v12h2.5c2.8 0 4.8-2 4.8-6s-2-6-4.8-6h-2.5z" />
               </svg>
             </div>
-            <span className="hidden sm:inline-block font-mono text-xs tracking-widest text-white/70 group-hover:text-white transition-colors uppercase drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]">
+            <span className="hidden sm:inline-block font-mono text-xs tracking-widest text-slate-700 dark:text-white/70 group-hover:text-black dark:group-hover:text-white transition-colors uppercase drop-shadow-sm dark:drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]">
               Dickson.dev
             </span>
           </a>

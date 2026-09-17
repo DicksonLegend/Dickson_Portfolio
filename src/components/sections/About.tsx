@@ -472,7 +472,7 @@ export const About: React.FC = () => {
                   </div>
 
                   {/* Industry Certifications */}
-                  <div className="space-y-2">
+                  <div id="certifications" className="space-y-2 scroll-mt-28">
                     <div className="font-mono text-xs text-[var(--accent)] tracking-wider uppercase mb-1">
                       Verified Industry Credentials
                     </div>
