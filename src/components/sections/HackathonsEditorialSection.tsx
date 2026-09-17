@@ -163,15 +163,7 @@ const HACKATHONS: HackathonItem[] = [
   },
 ]
 
-const PARTNER_LOGOS = [
-  'GOOGLE CLOUD',
-  'AICTE',
-  'HACKWITHINDIA',
-  'KARUNYA UNIVERSITY',
-  'BI3 TECHNOLOGIES',
-  'DEVPOST',
-  'NVIDIA DLI',
-]
+const DIVIDER_WORDS = ['LEARNED', 'EARNED', 'BUILT', 'SHIPPED', 'REPEAT']
 
 const ITEM_HEIGHT = 48
 
@@ -473,19 +465,19 @@ export const HackathonsEditorialSection: React.FC = () => {
 
         </div>
 
-        {/* Bottom Area: Monochrome Partner / Host Ribbon (TinyWins Style) */}
-        <div className="w-full pt-4 pb-2 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-neutral-400">
-          <div className="font-mono text-[10px] tracking-widest uppercase text-neutral-500 font-semibold">
-            VERIFIED PARTICIPATION IN NATIONAL & UNIVERSITY INITIATIVES
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-mono text-[11px] tracking-wider uppercase font-bold text-neutral-600">
-            {PARTNER_LOGOS.map((logo) => (
-              <span key={logo} className="hover:text-black transition-colors">
-                {logo}
-              </span>
-            ))}
-          </div>
+        {/* Bottom Area: Editorial 5-Word Section Divider */}
+        <div className="w-full pt-4 pb-1 sm:pb-2 flex items-center justify-between select-none">
+          {DIVIDER_WORDS.map((word) => (
+            <span
+              key={word}
+              className="font-bold uppercase text-black tracking-[-0.03em] text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl whitespace-nowrap"
+              style={{
+                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+              }}
+            >
+              {word}
+            </span>
+          ))}
         </div>
       </div>
 
