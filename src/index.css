@@ -305,4 +305,14 @@ html.light .crystal-btn:hover,
   }
 }
 
+/* Hide floating navbar completely when a certificate modal is open */
+body.cert-modal-open header {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-24px) !important;
+  transition: opacity 0.25s ease, transform 0.25s ease !important;
+}
+
+
+
 

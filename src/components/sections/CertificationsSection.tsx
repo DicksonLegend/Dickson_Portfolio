@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { certificatesData, type CertificateItem } from '@/data/certificatesData'
 import {
@@ -30,6 +31,29 @@ export const CertificationsSection: React.FC = () => {
       }
     }
   }, [isInView])
+
+  // Manage modal state: lock background scroll, hide floating navbar, and allow Escape to close
+  useEffect(() => {
+    if (selectedCert) {
+      document.body.classList.add('cert-modal-open')
+      document.body.style.overflow = 'hidden'
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setSelectedCert(null)
+        }
+      }
+      window.addEventListener('keydown', handleKeyDown)
+      return () => {
+        document.body.classList.remove('cert-modal-open')
+        document.body.style.overflow = ''
+        window.removeEventListener('keydown', handleKeyDown)
+      }
+    } else {
+      document.body.classList.remove('cert-modal-open')
+      document.body.style.overflow = ''
+    }
+  }, [selectedCert])
 
   const categories: { label: CategoryFilter; count: number }[] = [
     { label: 'All', count: certificatesData.length },
@@ -213,133 +237,136 @@ export const CertificationsSection: React.FC = () => {
       </div>
 
       {/* Interactive Certificate Preview Modal */}
-      <AnimatePresence>
-        {selectedCert && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedCert(null)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md"
-            />
+      {typeof document !== 'undefined' && createPortal(
+        <AnimatePresence>
+          {selectedCert && (
+            <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedCert(null)}
+                className="absolute inset-0 bg-black/90 backdrop-blur-md"
+              />
 
-            {/* Modal Dialog Card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-2xl bg-[var(--bg-secondary)] border border-[var(--border)] rounded-2xl p-6 shadow-2xl z-10 overflow-hidden text-[var(--text)] max-h-[90vh] flex flex-col"
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[var(--accent)] uppercase tracking-wider mb-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{selectedCert.category} · {selectedCert.issuer}</span>
+              {/* Modal Dialog Card */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-full max-w-2xl bg-[var(--bg-secondary)] border border-[var(--border)] rounded-2xl p-6 shadow-2xl z-10 overflow-hidden text-[var(--text)] max-h-[90vh] flex flex-col"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[var(--accent)] uppercase tracking-wider mb-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{selectedCert.category} · {selectedCert.issuer}</span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold text-[var(--textTitle)] leading-snug">
+                      {selectedCert.title}
+                    </h3>
+                    <div className="text-xs font-mono text-[var(--textLight)] mt-1">
+                      Issued: {selectedCert.date} {selectedCert.credentialId && `· Credential ID: ${selectedCert.credentialId}`}
+                    </div>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[var(--textTitle)] leading-snug">
-                    {selectedCert.title}
-                  </h3>
-                  <div className="text-xs font-mono text-[var(--textLight)] mt-1">
-                    Issued: {selectedCert.date} {selectedCert.credentialId && `· Credential ID: ${selectedCert.credentialId}`}
-                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCert(null)}
+                    className="p-1.5 rounded-lg text-[var(--textLight)] hover:text-[var(--textTitle)] hover:bg-[var(--bg)] transition-colors cursor-pointer"
+                    aria-label="Close modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedCert(null)}
-                  className="p-1.5 rounded-lg text-[var(--textLight)] hover:text-[var(--textTitle)] hover:bg-[var(--bg)] transition-colors cursor-pointer"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Preview Content */}
-              <div className="py-4 flex-1 overflow-y-auto">
-                {selectedCert.details && (
-                  <div className="p-3.5 rounded-xl bg-[var(--bg)] border border-[var(--border-subtle)] text-xs text-[var(--textBody)] leading-relaxed mb-4">
-                    <div className="font-semibold text-[var(--textTitle)] mb-1">Credential Details:</div>
-                    {selectedCert.details}
-                  </div>
-                )}
-
-                {/* Preview Frame for Images or PDF Preview Notice */}
-                {selectedCert.fileType === 'jpeg' || selectedCert.fileType === 'png' ? (
-                  <div className="rounded-xl overflow-hidden border border-[var(--border)] bg-black/40 flex items-center justify-center max-h-96">
-                    <img
-                      src={selectedCert.filePath}
-                      alt={selectedCert.title}
-                      className="w-full h-auto max-h-96 object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className="p-6 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] flex flex-col items-center justify-center text-center gap-3">
-                    <FileText className="w-12 h-12 text-[var(--accent)]" />
-                    <div className="text-sm font-medium text-[var(--textTitle)]">
-                      PDF Document: {selectedCert.title}
+                {/* Preview Content */}
+                <div className="py-4 flex-1 overflow-y-auto">
+                  {selectedCert.details && (
+                    <div className="p-3.5 rounded-xl bg-[var(--bg)] border border-[var(--border-subtle)] text-xs text-[var(--textBody)] leading-relaxed mb-4">
+                      <div className="font-semibold text-[var(--textTitle)] mb-1">Credential Details:</div>
+                      {selectedCert.details}
                     </div>
-                    <p className="text-xs text-[var(--textLight)] max-w-sm">
-                      This verified document is stored as a high-resolution vector PDF in the official archive.
-                    </p>
+                  )}
+
+                  {/* Preview Frame for Images or PDF Preview Notice */}
+                  {selectedCert.fileType === 'jpeg' || selectedCert.fileType === 'png' ? (
+                    <div className="rounded-xl overflow-hidden border border-[var(--border)] bg-black/40 flex items-center justify-center max-h-96">
+                      <img
+                        src={selectedCert.filePath}
+                        alt={selectedCert.title}
+                        className="w-full h-auto max-h-96 object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className="p-6 rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg)] flex flex-col items-center justify-center text-center gap-3">
+                      <FileText className="w-12 h-12 text-[var(--accent)]" />
+                      <div className="text-sm font-medium text-[var(--textTitle)]">
+                        PDF Document: {selectedCert.title}
+                      </div>
+                      <p className="text-xs text-[var(--textLight)] max-w-sm">
+                        This verified document is stored as a high-resolution vector PDF in the official archive.
+                      </p>
+                      <a
+                        href={selectedCert.filePath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-[var(--accent)] text-black hover:opacity-95 transition-opacity"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Open Full PDF in New Tab</span>
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Actions */}
+                <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between gap-3">
+                  {selectedCert.verifyUrl ? (
+                    <a
+                      href={selectedCert.verifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-mono text-[var(--accent)] hover:underline"
+                    >
+                      <span>Verify with Issuer</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  ) : (
+                    <span className="text-xs font-mono text-[var(--textLight)]">
+                      Direct Institutional Certificate
+                    </span>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={selectedCert.filePath}
+                      download
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[var(--bg)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--textTitle)] transition-colors"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
+                    </a>
                     <a
                       href={selectedCert.filePath}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-[var(--accent)] text-black hover:opacity-95 transition-opacity"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[var(--accent)] text-black hover:opacity-95 transition-opacity font-semibold"
                     >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Open Full PDF in New Tab</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Open Document</span>
                     </a>
                   </div>
-                )}
-              </div>
-
-              {/* Footer Actions */}
-              <div className="pt-4 border-t border-[var(--border-subtle)] flex items-center justify-between gap-3">
-                {selectedCert.verifyUrl ? (
-                  <a
-                    href={selectedCert.verifyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-mono text-[var(--accent)] hover:underline"
-                  >
-                    <span>Verify with Issuer</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                ) : (
-                  <span className="text-xs font-mono text-[var(--textLight)]">
-                    Direct Institutional Certificate
-                  </span>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <a
-                    href={selectedCert.filePath}
-                    download
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[var(--bg)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--textTitle)] transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download</span>
-                  </a>
-                  <a
-                    href={selectedCert.filePath}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[var(--accent)] text-black hover:opacity-95 transition-opacity font-semibold"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Open Document</span>
-                  </a>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   )
 }
