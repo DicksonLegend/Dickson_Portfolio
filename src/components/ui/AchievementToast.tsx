@@ -28,7 +28,7 @@ export const AchievementToast: React.FC<AchievementToastProps> = () => {
       }
       mediaQuery.addEventListener('change', handleMediaChange)
 
-      // Listen for custom trigger event
+      // Listen for custom trigger event (fires whenever user enters the section)
       const handleTrigger = () => {
         if (hasFiredRef.current) return
         hasFiredRef.current = true
@@ -38,6 +38,10 @@ export const AchievementToast: React.FC<AchievementToastProps> = () => {
         // Auto dismiss after 4 seconds
         const timer = setTimeout(() => {
           setIsVisible(false)
+          // Allow re-triggering whenever user scrolls away and returns
+          setTimeout(() => {
+            hasFiredRef.current = false
+          }, 1500)
         }, 4000)
 
         return () => clearTimeout(timer)
