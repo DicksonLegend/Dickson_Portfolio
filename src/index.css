@@ -204,71 +204,64 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Light Mode Crystal Styles (Sleek Smoked Obsidian Glass for high contrast)
+   Light Mode Crystal Styles (Pristine Frosted White Crystal Glass)
    -------------------------------------------------------------------------- */
 html.light .crystal-dock,
 [data-theme='light'] .crystal-dock {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.88) 0%,
-    rgba(30, 41, 59, 0.82) 50%,
-    rgba(15, 23, 42, 0.90) 100%
-  );
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-top-color: rgba(255, 255, 255, 0.52);
-  border-bottom-color: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top-color: rgba(255, 255, 255, 0.95);
+  border-bottom-color: rgba(0, 0, 0, 0.06);
   box-shadow:
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4),
-    0 20px 45px rgba(0, 0, 0, 0.3),
-    0 4px 14px rgba(0, 0, 0, 0.2);
+    0 12px 35px rgba(0, 0, 0, 0.06),
+    0 2px 6px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
 }
 
 html.light .crystal-lens,
 [data-theme='light'] .crystal-lens {
-  background: linear-gradient(
-    135deg,
-    rgba(15, 23, 42, 0.88) 0%,
-    rgba(30, 41, 59, 0.82) 100%
-  );
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-top-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top-color: rgba(255, 255, 255, 1);
   box-shadow:
-    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.45),
-    0 8px 24px rgba(0, 0, 0, 0.22);
-  color: #ffffff;
+    0 4px 14px rgba(0, 0, 0, 0.06),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+  color: #1a1a1a;
 }
 
 html.light .crystal-pill-active,
 [data-theme='light'] .crystal-pill-active {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.24) 0%,
-    rgba(255, 255, 255, 0.12) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-top-color: rgba(255, 255, 255, 0.85);
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-top-color: rgba(255, 255, 255, 1);
   box-shadow:
-    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.7),
-    0 4px 16px rgba(0, 0, 0, 0.35);
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 html.light .crystal-btn,
 [data-theme='light'] .crystal-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.20) 0%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-top-color: rgba(255, 255, 255, 0.65);
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-top-color: rgba(255, 255, 255, 0.2);
   box-shadow:
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45),
-    0 4px 12px rgba(0, 0, 0, 0.25);
+    0 3px 10px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+html.light .crystal-btn:hover,
+[data-theme='light'] .crystal-btn:hover {
+  background: #000000;
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, 0.22);
 }
 
 /* Cyan block wipe animation for role switching (exact Hamish reveal) */
