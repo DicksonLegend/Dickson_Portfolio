@@ -336,6 +336,30 @@ body.cert-modal-open header {
   }
 }
 
+/* Infinite editorial divider marquee (Left to Right - Mirrored) */
+@keyframes marqueeRight {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeRight 34s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-right {
+    animation: none !important;
+  }
+}
+
+
 
 
 

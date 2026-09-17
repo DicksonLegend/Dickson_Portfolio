@@ -5,4 +5,6 @@ export * from './Statement'
 export * from './Projects'
 export * from './ReceiptTransition'
 export * from './HackathonsEditorialSection'
+export * from './CoursesEditorialSection'
 export * from './CertificationsSection'
+
