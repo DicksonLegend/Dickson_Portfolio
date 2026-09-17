@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 
@@ -9,6 +9,8 @@ export interface AchievementToastProps {
 
 export const AchievementToast: React.FC<AchievementToastProps> = () => {
   const [isVisible, setIsVisible] = useState(false)
+  const hasFiredRef = useRef(false)
+
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -28,10 +30,9 @@ export const AchievementToast: React.FC<AchievementToastProps> = () => {
 
       // Listen for custom trigger event
       const handleTrigger = () => {
-        const alreadyFired = sessionStorage.getItem('dickson_cert_achievement_unlocked')
-        if (alreadyFired) return
+        if (hasFiredRef.current) return
+        hasFiredRef.current = true
 
-        sessionStorage.setItem('dickson_cert_achievement_unlocked', 'true')
         setIsVisible(true)
 
         // Auto dismiss after 4 seconds
@@ -57,7 +58,7 @@ export const AchievementToast: React.FC<AchievementToastProps> = () => {
         <aside
           aria-live="polite"
           aria-atomic="true"
-          className="fixed top-20 right-4 sm:right-8 z-50 pointer-events-auto select-none"
+          className="fixed top-20 right-4 sm:right-8 z-[100] pointer-events-auto select-none"
         >
           <motion.div
             initial={
@@ -87,7 +88,7 @@ export const AchievementToast: React.FC<AchievementToastProps> = () => {
             className="group relative p-0.5 rounded-2xl bg-gradient-to-r from-amber-500/50 via-yellow-400/30 to-amber-600/40 shadow-[0_16px_40px_rgba(0,0,0,0.65),0_0_25px_rgba(240,169,58,0.25)]"
           >
             {/* Inner Glass Card */}
-            <div className="relative bg-[#0a1315]/95 backdrop-blur-2xl rounded-[calc(1rem-2px)] p-3.5 sm:p-4 flex items-center gap-3.5 border border-amber-500/30 text-white min-w-[290px] sm:min-w-[340px] overflow-hidden">
+            <div className="relative bg-[#111111]/95 backdrop-blur-2xl rounded-[calc(1rem-2px)] p-3.5 sm:p-4 flex items-center gap-3.5 border border-amber-500/30 text-white min-w-[290px] sm:min-w-[340px] overflow-hidden">
               {/* Subtle radiant background glow */}
               <div className="absolute -top-6 -left-6 w-24 h-24 bg-amber-500/20 rounded-full blur-xl pointer-events-none" />
 
