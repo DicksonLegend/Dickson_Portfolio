@@ -465,19 +465,39 @@ export const HackathonsEditorialSection: React.FC = () => {
 
         </div>
 
-        {/* Bottom Area: Editorial 5-Word Section Divider */}
-        <div className="w-full pt-4 pb-1 sm:pb-2 flex items-center justify-between select-none">
-          {DIVIDER_WORDS.map((word) => (
-            <span
-              key={word}
-              className="font-bold uppercase text-black tracking-[-0.03em] text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl whitespace-nowrap"
-              style={{
-                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-              }}
-            >
-              {word}
-            </span>
-          ))}
+        {/* Bottom Area: Editorial 5-Word Running Loop Marquee (Right to Left) */}
+        <div className="w-full pt-4 pb-1 sm:pb-2 overflow-hidden select-none pointer-events-none">
+          <div className="flex w-max animate-marquee-left">
+            {/* Track 1 */}
+            <div className="flex items-center shrink-0 gap-10 sm:gap-16 md:gap-24 lg:gap-28 pr-10 sm:pr-16 md:pr-24 lg:pr-28">
+              {[...DIVIDER_WORDS, ...DIVIDER_WORDS].map((word, idx) => (
+                <span
+                  key={`track1-${idx}`}
+                  className="font-bold uppercase text-black tracking-[-0.03em] text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl whitespace-nowrap"
+                  style={{
+                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+
+            {/* Track 2 (Seamless loop clone) */}
+            <div className="flex items-center shrink-0 gap-10 sm:gap-16 md:gap-24 lg:gap-28 pr-10 sm:pr-16 md:pr-24 lg:pr-28" aria-hidden="true">
+              {[...DIVIDER_WORDS, ...DIVIDER_WORDS].map((word, idx) => (
+                <span
+                  key={`track2-${idx}`}
+                  className="font-bold uppercase text-black tracking-[-0.03em] text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl whitespace-nowrap"
+                  style={{
+                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

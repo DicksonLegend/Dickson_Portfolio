@@ -313,6 +313,30 @@ body.cert-modal-open header {
   transition: opacity 0.25s ease, transform 0.25s ease !important;
 }
 
+/* Infinite editorial divider marquee (Right to Left) */
+@keyframes marqueeLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeLeft 28s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-left {
+    animation: none !important;
+  }
+}
+
+
 
 
 
