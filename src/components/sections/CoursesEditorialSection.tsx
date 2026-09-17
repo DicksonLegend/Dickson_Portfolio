@@ -7,7 +7,6 @@ import {
   ExternalLink,
   Eye,
   X,
-  Award,
   ShieldCheck,
 } from 'lucide-react'
 
@@ -24,8 +23,6 @@ export interface CourseCertItem {
   pdfPath?: string
   credentialId?: string
   verifyUrl?: string
-  valueProp: string
-  description: string
   tags: string[]
 }
 
@@ -41,63 +38,54 @@ const COURSE_CERTS: CourseCertItem[] = [
     pdfPath: '/Certificates/DIckson-Microsoft-certificate.pdf',
     credentialId: 'warrr-FahH',
     verifyUrl: 'https://verify.certiport.com',
-    valueProp: 'On Resume · Global Brand · Certiport Verifiable',
-    description: 'Rigorous foundational certification covering core machine learning workloads, computer vision, natural language processing, and conversational AI services on Azure cloud.',
     tags: [
-      'Certiport Verifiable',
-      'Azure AI Services',
-      'Machine Learning Workloads',
-      'Computer Vision & NLP',
-      'Conversational AI',
-      'Global Microsoft Standard',
+      'Microsoft & Certiport Certified',
+      'Credential Code: warrr-FahH',
+      'Cloud Machine Learning & Vision',
+      'Natural Language Processing & AI',
+      'Certiport Verified & Verifiable',
     ],
   },
   {
     id: 'aws-ml-solutions',
     number: '2',
     title: 'AWS – Developing Machine Learning Solutions',
-    shortTitle: 'AWS Developing ML Solutions',
+    shortTitle: 'AWS ML Solutions',
     host: 'Amazon Web Services (AWS)',
     date: 'Apr 06, 2026',
     image: '/Course_Certificates_Images/aws_machine_learning.png',
     pdfPath: '/Certificates/80452091-ae26-4539-a03c-096fbfd52c7d.pdf',
     credentialId: '80452091-ae26-4539-a03c',
-    valueProp: 'On Resume · Core ML-on-Cloud Proof',
-    description: 'Demonstrates deep capability in architecting and operationalizing end-to-end machine learning workflows on AWS, including model training, inference pipelines, and scalable cloud endpoints.',
     tags: [
-      'AWS Training & Certification',
-      'Cloud ML Architecture',
-      'Scalable Cloud Endpoints',
-      'Inference Pipelines',
-      'Enterprise ML Ops',
-      'Amazon Web Services Proof',
+      'Amazon Web Services Certified',
+      'Credential: 80452091-ae26-4539',
+      'Cloud ML Architecture & Pipelines',
+      'Model Training & Endpoint Scaling',
+      'Production AWS Cloud Proof',
     ],
   },
   {
     id: 'mongodb-genai-apps',
     number: '3',
     title: 'MongoDB – Building GenAI Apps Learning Path',
-    shortTitle: 'MongoDB Building GenAI Apps',
+    shortTitle: 'MongoDB GenAI Apps',
     host: 'MongoDB University',
     date: 'Apr 06, 2026',
     image: '/Course_Certificates_Images/mongodb_genai_apps.png',
     pdfPath: '/Certificates/dickson-e-1a2f47c1-7f3d-4221-8fdc-d07a89d32db6-certificate.pdf',
     credentialId: 'MDB2bsn4a4tpr',
-    valueProp: 'On Resume · GenAI Focus',
-    description: 'Specialized learning path certification for building production GenAI systems using MongoDB Atlas Vector Search, LLM embeddings, semantic indexing, and operational database backends.',
     tags: [
-      'MongoDB University',
-      'Atlas Vector Search',
-      'Semantic Indexing',
-      'LLM Embeddings',
-      'GenAI Backend Integration',
-      'Production Architecture',
+      'MongoDB University Learning Path',
+      'Credential ID: MDB2bsn4a4tpr',
+      'Atlas Vector Search & Indexing',
+      'LLM Embeddings & Semantic Retrieval',
+      'Enterprise GenAI Architecture',
     ],
   },
   {
     id: 'aws-microservices-cicd',
     number: '4',
-    title: 'AWS Academy Graduate – Microservices & CI/CD Builder',
+    title: 'AWS Academy Graduate – Microservices & CI/CD Pipeline Builder',
     shortTitle: 'AWS Microservices & CI/CD',
     host: 'AWS Academy (Credly)',
     date: 'Apr 06, 2026',
@@ -105,80 +93,68 @@ const COURSE_CERTS: CourseCertItem[] = [
     pdfPath: '/Certificates/AWS_Academy_Graduate___Microservices_and_CI_CD_Pipeline_Builder___Training_Badge_Badge20260406-30-tgyz4q.pdf',
     credentialId: 'N9tm4Kd6',
     verifyUrl: 'https://www.credly.com/go/N9tm4Kd6',
-    valueProp: 'On Resume · Proves You Ship and Deploy, Not Just Prototype',
-    description: 'Hands-on credential validating continuous integration, continuous delivery, containerization, and automated deployment architectures on AWS cloud infrastructure.',
     tags: [
-      'Credly Digital Badge',
-      'CI/CD Automated Pipelines',
-      'Microservices Architecture',
-      'Containerization & Docker',
-      'AWS Cloud Infrastructure',
-      'Production Deployment Proof',
+      'AWS Academy Graduate (Credly)',
+      'Microservices & Automated CI/CD',
+      'Containerization & Docker Workflows',
+      'Infrastructure as Code & Pipelines',
+      'Production Delivery & Ship Proof',
     ],
   },
   {
     id: 'mongodb-rag-apps',
     number: '5',
     title: 'Building RAG Apps Using MongoDB',
-    shortTitle: 'Building RAG Apps (Credly)',
+    shortTitle: 'Building RAG Apps',
     host: 'MongoDB (Credly)',
     date: 'Oct 25, 2025',
     image: '/Course_Certificates_Images/mongodb_rag_apps.png',
     pdfPath: '/Certificates/SkillsCert20251025-31-elxsju.pdf',
     credentialId: '1da987da-878c-45da-8c42',
     verifyUrl: 'https://www.credly.com/badges/1da987da-878c-45da-8c42-bf0e9d6da6a8',
-    valueProp: 'Signature Cert · Directly Validates EduRAG',
-    description: 'Advanced Retrieval-Augmented Generation credential validating chunking strategies, vector embeddings, hybrid semantic retrieval, and context window orchestration directly applied in EduRAG.',
     tags: [
-      'Credly Verified Credential',
-      'Direct EduRAG Proof',
-      'Hybrid Semantic Search',
-      'Vector Embeddings & Chunks',
+      'MongoDB Credly Digital Badge',
+      'Direct EduRAG Architecture Proof',
+      'Hybrid Vector Search & Chunking',
       'Context Window Optimization',
-      'Enterprise RAG Pipelines',
+      'Production RAG Pipeline Verified',
     ],
   },
   {
     id: 'mongodb-ai-agents',
     number: '6',
     title: 'Building AI Agents with MongoDB',
-    shortTitle: 'Building AI Agents (Credly)',
+    shortTitle: 'Building AI Agents',
     host: 'MongoDB (Credly)',
     date: 'Oct 25, 2025',
     image: '/Course_Certificates_Images/mongodb_ai_agents.png',
     pdfPath: '/Certificates/SkillsCert20251025-31-z3vi08.pdf',
     credentialId: 'cea6e68d-9140-4ad2-802e',
     verifyUrl: 'https://www.credly.com/badges/cea6e68d-9140-4ad2-802e-5a31ecb68ae4',
-    valueProp: 'Signature Cert · Directly Validates AIRA & Agent Systems',
-    description: 'Validates autonomous agent design patterns, tool-calling loops, multi-agent coordination, and persistent state memory on MongoDB, directly backing AIRA and multi-agent system claims.',
     tags: [
-      'Credly Verified Credential',
-      'Direct AIRA Proof',
-      'Autonomous Agent Workflows',
-      'Tool Calling & Loops',
-      'Stateful Agent Memory',
-      'Multi-Agent Orchestration',
+      'MongoDB Credly Digital Badge',
+      'Direct AIRA Autonomous Agent Proof',
+      'Tool Calling & Multi-Agent Loops',
+      'Persistent Stateful Agent Memory',
+      'Autonomous System Engineering',
     ],
   },
   {
     id: 'prepinsta-mern-stack',
     number: '7',
     title: 'Full Stack Web Development MERN Stack',
-    shortTitle: 'Full Stack MERN Stack Mastery',
+    shortTitle: 'Full Stack MERN Stack',
     host: 'PrepInsta Technologies',
     date: 'Oct 27, 2025',
     image: '/Course_Certificates_Images/prepinsta_mern_stack.png',
     pdfPath: '/Certificates/certificate_Full Stack Web development MERN Stack_1634237.pdf',
     credentialId: '68ff9156d5fa55bf14baf580',
-    valueProp: 'Backs Your Production Full-Stack Claim',
-    description: 'Comprehensive full-stack accreditation spanning React, Node.js, Express, MongoDB, RESTful APIs, JWT authentication, state management, and production-ready web application engineering.',
     tags: [
-      'PrepInsta Technologies',
-      'Full-Stack Architecture',
-      'React & Modern Frontend',
-      'Node.js & Express REST APIs',
-      'MongoDB Data Layer',
-      'Production Engineering Proof',
+      'PrepInsta Technologies Certified',
+      'Credential ID: 68ff9156d5fa',
+      'Full-Stack React & Node.js REST',
+      'MongoDB Production Data Layer',
+      'End-to-End Web Engineering',
     ],
   },
 ]
@@ -243,7 +219,7 @@ export const CoursesEditorialSection: React.FC = () => {
     }
   }, [selectedModalCert])
 
-  // Continuous, buttery-smooth GSAP ScrollTrigger timeline
+  // Continuous, buttery-smooth GSAP ScrollTrigger timeline matching HackathonsEditorialSection exactly
   useEffect(() => {
     if (prefersReducedMotion) return
     if (!containerRef.current || !stageRef.current || !listRef.current) return
@@ -268,13 +244,16 @@ export const CoursesEditorialSection: React.FC = () => {
         },
       })
 
-      // Continuous vertical translation of the items list
+      // Continuous vertical translation of the items list without inline style overrides
       tl.to(listRef.current, {
         y: -totalDistance,
         ease: 'none',
         duration: 1,
       })
     }, containerRef)
+
+    // Ensure ScrollTrigger accurately accounts for the preceding pinned hackathon section
+    ScrollTrigger.refresh()
 
     return () => ctx.revert()
   }, [prefersReducedMotion])
@@ -315,7 +294,7 @@ export const CoursesEditorialSection: React.FC = () => {
         {/* Top Area: Large Impact Headline - Right Aligned (Mirrored) */}
         <div className="w-full pt-10 sm:pt-14 md:pt-16 flex flex-col items-end text-right">
           <h2
-            className="w-full uppercase text-black font-bold tracking-[-0.04em] leading-[0.84] select-none text-[clamp(28px,4.8vw,72px)] text-right"
+            className="w-full uppercase text-black font-bold tracking-[-0.04em] leading-[0.84] select-none text-[clamp(32px,5.2vw,76px)] text-right"
             style={{
               fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             }}
@@ -335,97 +314,79 @@ export const CoursesEditorialSection: React.FC = () => {
           <div className="w-full border-t border-black relative z-10" />
 
           {/* Mirrored Layout:
-              - Left side (Cols 1-7): Certificate Image Preview Card + Metadata Tags
-              - Right side (Cols 8-12): Scrolling vertical list of 7 Course Credentials
+              - Left side (Cols 1-5): Description Tags on extreme left + Compact Certificate Preview Image
+              - Center-Right (Cols 7-10): Scrolling vertical list of 7 Course Credentials (identical fonts & size to Hackathons)
+              - Far Right (Cols 11-12): "Key credentials" section label
           */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pt-3 sm:pt-4 items-start min-h-[260px] relative z-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 pt-3 sm:pt-4 items-start min-h-[260px] relative z-20">
             
-            {/* Mirrored Left Column (Cols 1-7): Certificate Showcase (Image + Structured Explanation) */}
-            <div className="col-span-12 md:col-span-7 order-2 md:order-1 flex flex-col sm:flex-row gap-5 lg:gap-8 items-start">
+            {/* Mirrored Left Column (Cols 1-5): Description Tags on Extreme Left + Compact Certificate Image */}
+            <div className="col-span-12 md:col-span-5 flex flex-col sm:flex-row items-start gap-6 lg:gap-8 justify-start">
               
-              {/* Certificate Preview Card with Lightbox Trigger */}
-              <div className="relative w-full sm:w-[58%] shrink-0">
+              {/* Side Description Tags (Placed at the EXTREME LEFT edge of the section!) */}
+              <div className="flex flex-col justify-start text-left max-w-xs pt-1 order-2 sm:order-1">
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={currentCert.id}
-                    initial={{ opacity: 0, scale: 0.97, y: 8 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, y: -8 }}
-                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                    className="group relative cursor-pointer overflow-hidden rounded-xl border border-neutral-300 bg-neutral-100 shadow-md transition-all duration-300 hover:shadow-2xl hover:border-black"
-                    onClick={() => setSelectedModalCert(currentCert)}
+                    key={currentCert.id + '-meta'}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.26, ease: 'easeOut' }}
+                    className="space-y-1.5"
                   >
-                    {/* Certificate Aspect Ratio Frame */}
-                    <div className="relative aspect-[16/11] w-full overflow-hidden bg-neutral-200">
-                      <img
-                        src={currentCert.image}
-                        alt={currentCert.title}
-                        className="h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
-                      />
-
-                      {/* Subtle Dark Gradient Overlay on Hover */}
-                      <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/30" />
-
-                      {/* Click To Expand Floating Pill */}
-                      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-black opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1">
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Inspect Full-Res</span>
+                    {currentCert.tags.map((tag) => (
+                      <div
+                        key={tag}
+                        className="text-xs sm:text-[13px] text-neutral-800 font-medium tracking-tight leading-snug"
+                        style={{
+                          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                        }}
+                      >
+                        {tag}
                       </div>
+                    ))}
 
-                      {/* Top Verified Ribbon Badge */}
-                      <div className="absolute top-3 left-3 flex items-center gap-1 rounded bg-black/85 px-2 py-0.5 text-[9px] font-mono uppercase tracking-widest text-white shadow-sm">
-                        <ShieldCheck className="w-3 h-3 text-cyan-400" />
-                        <span>VERIFIED CREDENTIAL</span>
-                      </div>
+                    {/* Action link */}
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedModalCert(currentCert)}
+                        className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-black hover:text-cyan-600 transition-colors cursor-pointer group"
+                      >
+                        <span>INSPECT CREDENTIAL</span>
+                        <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      </button>
                     </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              {/* Explanatory Context Tags & Metadata */}
-              <div className="w-full sm:flex-1 flex flex-col justify-between self-stretch text-left">
+              {/* Certificate Preview Card (Identical compact size to Hackathons: w-56 to w-64) */}
+              <div className="relative group w-full sm:w-56 md:w-60 lg:w-64 flex-shrink-0 order-1 sm:order-2">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentCert.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.28, ease: 'easeOut' }}
-                    className="space-y-3"
+                    className="relative rounded-xl overflow-hidden bg-neutral-50 border border-neutral-200 shadow-[0_16px_36px_rgba(0,0,0,0.08)] cursor-pointer"
+                    onClick={() => setSelectedModalCert(currentCert)}
                   >
-                    {/* Value Proposition Badge */}
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-100 border border-neutral-300 text-[10px] font-mono uppercase font-bold tracking-wider text-black">
-                      <Award className="w-3 h-3 text-amber-600" />
-                      <span>{currentCert.valueProp}</span>
-                    </div>
+                    {/* Certificate Aspect Ratio Frame */}
+                    <div className="relative aspect-[1.38/1] w-full overflow-hidden bg-neutral-100 flex items-center justify-center p-1.5">
+                      <img
+                        src={currentCert.image}
+                        alt={currentCert.title}
+                        className="w-full h-full object-contain rounded transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
 
-                    {/* Concise Impact Description */}
-                    <p className="text-xs sm:text-[13px] leading-relaxed text-neutral-700 font-medium line-clamp-3">
-                      {currentCert.description}
-                    </p>
-
-                    {/* Metadata Pill Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {currentCert.tags.slice(0, 4).map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase bg-neutral-100 text-neutral-800 border border-neutral-200"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Direct Inspect Credential CTA */}
-                    <div className="pt-2">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedModalCert(currentCert)}
-                        className="group/btn inline-flex items-center gap-1.5 text-xs font-bold text-black hover:opacity-75 transition-opacity cursor-pointer font-mono uppercase tracking-wider"
-                      >
-                        <span>INSPECT CREDENTIAL</span>
-                        <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                      </button>
+                      {/* Hover Overlay Hint */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 text-white text-xs font-semibold">
+                        <Eye className="w-4 h-4" />
+                        <span>Enlarge</span>
+                      </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -433,67 +394,82 @@ export const CoursesEditorialSection: React.FC = () => {
 
             </div>
 
-            {/* Mirrored Right Column (Cols 8-12): Scrolling Course Certificates Vertical List */}
-            <div className="col-span-12 md:col-span-5 order-1 md:order-2 flex flex-col justify-start relative">
-              
-              {/* Category Label */}
-              <div className="text-[11px] font-mono tracking-wider uppercase text-neutral-500 font-semibold mb-3 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-black inline-block" />
-                <span>KEY TECHNICAL ACCREDITATIONS</span>
-              </div>
+            {/* Middle Breathing Room / Spacer Column */}
+            <div className="hidden md:block md:col-span-1 pointer-events-none" />
 
-              {/* Scrolling Titles Track */}
-              <div className="relative overflow-visible">
+            {/* Mirrored Right Column (Cols 7-10): Scrolling Course Titles Track */}
+            <div className="col-span-12 md:col-span-4 relative">
+              <div
+                className="relative overflow-visible"
+                style={{
+                  clipPath: 'inset(-144px 0 0 0)',
+                }}
+              >
                 <div
                   ref={listRef}
-                  className="flex flex-col will-change-transform text-left"
-                  style={{ transform: 'translate3d(0, 0px, 0)' }}
+                  className="flex flex-col will-change-transform"
                 >
                   {COURSE_CERTS.map((cert, idx) => {
-                    const isActive = idx === activeIndex
-                    const isPassed = idx < activeIndex
+                    const isActive = activeIndex === idx
+                    const isPast = idx < activeIndex
 
                     return (
-                      <div
+                      <button
                         key={cert.id}
+                        type="button"
                         onClick={() => handleItemClick(idx)}
-                        className="group flex items-baseline gap-4 cursor-pointer transition-all duration-300"
-                        style={{ height: `${ITEM_HEIGHT}px` }}
+                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none cursor-pointer ${
+                          isActive
+                            ? 'text-black opacity-100 scale-100'
+                            : isPast
+                            ? 'text-neutral-300 hover:text-neutral-500 opacity-40 hover:opacity-80 scale-[0.98]'
+                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98]'
+                        }`}
                       >
-                        {/* Number Index */}
+                        {/* Number */}
                         <span
-                          className={`font-mono text-base sm:text-lg transition-colors duration-300 shrink-0 ${
+                          className={`font-sans transition-colors shrink-0 ${
                             isActive
-                              ? 'text-black font-extrabold'
-                              : isPassed
-                                ? 'text-neutral-300 font-semibold'
-                                : 'text-neutral-300 group-hover:text-neutral-600 font-semibold'
+                              ? 'font-bold text-2xl sm:text-3xl md:text-4xl text-black'
+                              : 'font-medium text-xl sm:text-2xl md:text-3xl'
                           }`}
+                          style={{
+                            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                          }}
                         >
-                          0{cert.number}
+                          {cert.number}
                         </span>
 
                         {/* Title Text */}
-                        <h3
-                          className={`truncate text-base sm:text-lg md:text-xl transition-all duration-300 tracking-[-0.02em] ${
+                        <span
+                          className={`font-sans tracking-tight transition-colors truncate ${
                             isActive
-                              ? 'text-black font-extrabold scale-100 origin-left'
-                              : isPassed
-                                ? 'text-neutral-300 font-medium'
-                                : 'text-neutral-300 group-hover:text-neutral-600 font-medium'
+                              ? 'font-extrabold text-2xl sm:text-3xl md:text-4xl text-black drop-shadow-sm'
+                              : 'font-medium text-xl sm:text-2xl md:text-3xl'
                           }`}
                           style={{
                             fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
                           }}
                         >
                           {cert.shortTitle}
-                        </h3>
-                      </div>
+                        </span>
+                      </button>
                     )
                   })}
                 </div>
               </div>
+            </div>
 
+            {/* Far Right: Section Label (Mirrors "Our hackathons" from the far left of the other section!) */}
+            <div className="col-span-12 md:col-span-2 pt-0.5 text-left md:text-right">
+              <span
+                className="text-xs sm:text-sm text-neutral-800 font-medium tracking-tight block"
+                style={{
+                  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+                }}
+              >
+                Key credentials
+              </span>
             </div>
 
           </div>
@@ -603,7 +579,7 @@ export const CoursesEditorialSection: React.FC = () => {
                       Issuer: {selectedModalCert.host}
                     </div>
                     <div className="text-xs text-neutral-600 mt-0.5">
-                      {selectedModalCert.valueProp}
+                      {selectedModalCert.tags[0]} · {selectedModalCert.tags[2]}
                     </div>
                   </div>
 
