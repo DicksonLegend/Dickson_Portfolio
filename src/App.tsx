@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './context/ThemeContext'
 import { Navbar, IntroLoader } from './components/layout'
-import { Hero, About, BookSkillsSection, Statement, Projects } from './components/sections'
-import { CustomCursor } from './components/ui'
+import { Hero, About, BookSkillsSection, Statement, Projects, ReceiptTransition, CertificationsSection } from './components/sections'
+import { CustomCursor, AchievementToast } from './components/ui'
 import { useScrollSpy } from './hooks/useScrollSpy'
 import { RotateCcw } from 'lucide-react'
 
@@ -16,7 +16,8 @@ export function AppContent() {
       {/* Custom Modern Animated Cursor */}
       <CustomCursor />
 
-      {/* 3D Spiral Particle Loading Screen */}
+      {/* Game-Style Achievement Toast */}
+      <AchievementToast />
 
       {/* Floating Pill Dock Navigation (Fixed permanently at viewport top) */}
       {!showIntro && <Navbar activeSection={activeSection} />}
@@ -48,6 +49,8 @@ export function AppContent() {
               <BookSkillsSection />
               <Statement />
               <Projects />
+              <ReceiptTransition />
+              <CertificationsSection />
             </main>
 
             {/* Footer with Replay Option */}

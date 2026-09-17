@@ -471,10 +471,18 @@ export const About: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Industry Certifications */}
-                  <div id="certifications" className="space-y-2 scroll-mt-28">
-                    <div className="font-mono text-xs text-[var(--accent)] tracking-wider uppercase mb-1">
-                      Verified Industry Credentials
+                  {/* Industry Certifications Preview in About */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-mono text-xs text-[var(--accent)] tracking-wider uppercase">
+                        Verified Industry Credentials (4 of 30)
+                      </div>
+                      <a
+                        href="#certifications"
+                        className="text-[10px] font-mono text-[var(--accent)] hover:underline inline-flex items-center gap-1"
+                      >
+                        <span>View All 30 →</span>
+                      </a>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
