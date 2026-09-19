@@ -287,9 +287,9 @@ export const HackathonsEditorialSection: React.FC = () => {
           end: 'bottom bottom',
           pin: stageRef.current,
           anticipatePin: 1,
-          scrub: 0.4,
+          scrub: 0.6,
           onUpdate: (self) => {
-            const listStartRatio = 0.50
+            const listStartRatio = 0.58
             if (self.progress <= listStartRatio) {
               setActiveIndex(0)
             } else {
@@ -387,9 +387,9 @@ export const HackathonsEditorialSection: React.FC = () => {
           {
             yPercent: -100,
             ease: 'power1.inOut',
-            duration: 1.5,
+            duration: 2.8,
           },
-          '>+=0.25'
+          '>+=0.3'
         )
       }
 
@@ -436,7 +436,7 @@ export const HackathonsEditorialSection: React.FC = () => {
     // Accurately scroll the window accounting for the initial printer reveal phase
     const st = scrollTriggerRef.current
     if (st) {
-      const listStartRatio = 0.50
+      const listStartRatio = 0.58
       const listProg = index / (totalItems - 1)
       const overallProgress = listStartRatio + listProg * (1 - listStartRatio)
       const targetScroll = st.start + overallProgress * (st.end - st.start)
@@ -465,7 +465,7 @@ export const HackathonsEditorialSection: React.FC = () => {
       aria-label="Hackathons and Arena Battle Records"
       className="relative w-full bg-white text-black select-none transition-colors duration-400"
       style={{
-        height: prefersReducedMotion ? 'auto' : '480vh',
+        height: prefersReducedMotion ? 'auto' : '560vh',
       }}
     >
       {/* Pinned Stage Canvas (Pure White, stark black high-fashion editorial) */}
@@ -610,7 +610,7 @@ export const HackathonsEditorialSection: React.FC = () => {
                     onClick={() => {
                       if (scrollTriggerRef.current) {
                         const st = scrollTriggerRef.current
-                        const targetScroll = st.start + 0.50 * (st.end - st.start)
+                        const targetScroll = st.start + 0.58 * (st.end - st.start)
                         window.scrollTo({ top: targetScroll, behavior: 'smooth' })
                       }
                     }}
