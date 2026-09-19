@@ -479,7 +479,7 @@ export const HackathonsEditorialSection: React.FC = () => {
           <div
             ref={curtainRef}
             id="certifications-curtain"
-            className="absolute inset-0 bg-[#0c0f12] text-[#fbf9f2] z-40 overflow-hidden flex flex-col justify-center items-center px-4 py-8 sm:py-12 select-none border-b border-neutral-700/60 shadow-[0_25px_60px_rgba(0,0,0,0.9)] will-change-transform"
+            className="absolute inset-0 bg-[#0c0f12] text-[#fbf9f2] z-40 overflow-hidden flex flex-col justify-center items-center px-4 py-8 sm:py-12 select-none will-change-transform"
           >
             {/* Background Ambient Glows: Cyan & Amber */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_30%,rgba(0,229,255,0.08),transparent_70%)] pointer-events-none" />
