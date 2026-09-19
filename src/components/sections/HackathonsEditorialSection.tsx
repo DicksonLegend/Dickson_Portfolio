@@ -231,38 +231,6 @@ export const HackathonsEditorialSection: React.FC = () => {
     })
 
     const ctx = gsap.context(() => {
-      // 1. Curtain Reveal Transition (Exclusive to reaching #certifications from #receipt-transition):
-      // As the dark receipt section scrolls up out of the viewport from bottom to top,
-      // stageRef is counter-translated so it sits completely static at viewport top = 0 in the background.
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top bottom',
-        end: 'top top',
-        scrub: true,
-        onUpdate: () => {
-          if (!stageRef.current || !containerRef.current) return
-          const cTop = containerRef.current.getBoundingClientRect().top
-          if (cTop > 0) {
-            gsap.set(stageRef.current, { y: -cTop, force3D: true })
-          } else {
-            gsap.set(stageRef.current, { y: 0, clearProps: 'transform' })
-          }
-        },
-        onLeave: () => {
-          if (stageRef.current) {
-            gsap.set(stageRef.current, { y: 0, clearProps: 'transform' })
-          }
-        },
-        onLeaveBack: () => {
-          if (stageRef.current) {
-            gsap.set(stageRef.current, { y: 0, clearProps: 'transform' })
-          }
-        },
-      })
-
-      // 2. Main Gliding List Trigger:
-      // Once fully revealed at 'top top', stageRef is pinned by GSAP at viewport top = 0,
-      // and normal scrubbing continues through the hackathons list items.
       const st = ScrollTrigger.create({
         trigger: containerRef.current,
         start: 'top top',
@@ -341,7 +309,7 @@ export const HackathonsEditorialSection: React.FC = () => {
       data-navbar-theme="light"
       ref={containerRef}
       aria-label="Hackathons and Arena Battle Records"
-      className="relative z-10 w-full bg-white text-black select-none transition-colors duration-400 overflow-visible"
+      className="relative w-full bg-white text-black select-none transition-colors duration-400"
       style={{
         height: prefersReducedMotion ? 'auto' : '300vh',
       }}
@@ -350,7 +318,7 @@ export const HackathonsEditorialSection: React.FC = () => {
       <div
         ref={stageRef}
         data-navbar-theme="light"
-        className="relative w-full h-screen min-h-[680px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden will-change-transform"
+        className="relative w-full h-screen min-h-[680px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden"
       >
         {/* Top Area: Large Impact Headline with tight leading */}
         <div className="w-full pt-10 sm:pt-14 md:pt-16">

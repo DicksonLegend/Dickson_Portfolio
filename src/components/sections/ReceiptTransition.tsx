@@ -182,7 +182,7 @@ export const ReceiptTransition: React.FC = () => {
       <section
         id="receipt-transition"
         aria-label="Projects to Certifications Transition"
-        className="relative z-20 w-full min-h-screen bg-[var(--bg)] text-[var(--text)] py-20 px-4 sm:px-8 overflow-hidden select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
+        className="relative w-full bg-[var(--bg)] text-[var(--text)] py-20 px-4 sm:px-8 overflow-hidden select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
       >
         <div className="relative max-w-4xl mx-auto flex flex-col items-center text-center">
           <div className="mb-4 inline-flex items-center gap-2 font-mono text-xs sm:text-sm tracking-widest text-[var(--accent)] font-medium">
@@ -224,12 +224,12 @@ export const ReceiptTransition: React.FC = () => {
       ref={sectionRef}
       id="receipt-transition"
       aria-label="Projects to Certifications Transition"
-      className="relative z-20 w-full min-h-screen bg-[var(--bg)] text-[var(--text)] select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
+      className="relative w-full bg-[var(--bg)] text-[var(--text)] select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
     >
       {/* Scroll-Triggered Stage: Flows naturally with page scroll */}
       <div
         ref={pinRef}
-        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 py-20 sm:py-28"
+        className="relative w-full min-h-[85vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20 sm:py-28"
       >
         {/* Background Ambient Glows: Cyan & Amber (Exact Hero Palette Match) */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_30%,rgba(0,229,255,0.08),transparent_70%)] pointer-events-none" />

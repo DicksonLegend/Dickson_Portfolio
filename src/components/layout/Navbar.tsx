@@ -53,23 +53,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
     let ticking = false
 
     const checkOverlap = () => {
-      // The floating navbar dock is centered at vertical Y ≈ 48px from viewport top
-      const navCenterY = 48
-
-      // Priority check: If the dark receipt section covers the navbar dock, keep dark navbar
-      const receiptEl = document.getElementById('receipt-transition')
-      if (receiptEl) {
-        const rRect = receiptEl.getBoundingClientRect()
-        if (rRect.top <= navCenterY && rRect.bottom > navCenterY) {
-          setIsOverLightSection(false)
-          ticking = false
-          return
-        }
-      }
-
       const lightElements = document.querySelectorAll<HTMLElement>(
         '[data-navbar-theme="light"], #certifications, #credentials'
       )
+      // The floating navbar dock is centered at vertical Y ≈ 48px from viewport top
+      const navCenterY = 48
 
       let overLight = false
       for (let i = 0; i < lightElements.length; i++) {
