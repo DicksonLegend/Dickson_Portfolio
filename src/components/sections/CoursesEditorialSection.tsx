@@ -343,7 +343,7 @@ export const CoursesEditorialSection: React.FC = () => {
         <div className="relative w-full my-auto">
           
           {/* Buffer space above line (where items float when scrolled up) */}
-          <div className="w-full h-24 sm:h-28 md:h-32 relative pointer-events-none" />
+          <div className="w-full h-28 sm:h-32 md:h-36 relative pointer-events-none" />
 
           {/* Horizontal Crisp Black Dividing Rule */}
           <div className="w-full border-t border-black relative z-30 pointer-events-none" />
@@ -434,7 +434,7 @@ export const CoursesEditorialSection: React.FC = () => {
               <div
                 className="relative overflow-visible"
                 style={{
-                  clipPath: 'inset(-200px -120px 0 0)',
+                  clipPath: 'inset(-145px -120px 0 0)',
                 }}
               >
                 <div
@@ -444,18 +444,26 @@ export const CoursesEditorialSection: React.FC = () => {
                   {COURSE_CERTS.map((cert, idx) => {
                     const isActive = activeIndex === idx
                     const isPast = idx < activeIndex
+                    const distanceInPast = activeIndex - idx
 
                     return (
                       <button
                         key={cert.id}
                         type="button"
                         onClick={() => handleItemClick(idx)}
-                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none cursor-pointer ${
+                        disabled={isPast}
+                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none ${
                           isActive
-                            ? 'text-black opacity-100 scale-100'
+                            ? 'text-black opacity-100 scale-100 cursor-pointer'
                             : isPast
-                            ? 'text-neutral-300 hover:text-neutral-500 opacity-40 hover:opacity-80 scale-[0.98]'
-                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98]'
+                            ? distanceInPast === 1
+                              ? 'text-neutral-400 opacity-35 scale-[0.98] pointer-events-none select-none'
+                              : distanceInPast === 2
+                              ? 'text-neutral-300 opacity-20 scale-[0.97] pointer-events-none select-none'
+                              : distanceInPast === 3
+                              ? 'text-neutral-200 opacity-10 scale-[0.96] pointer-events-none select-none'
+                              : 'opacity-0 pointer-events-none select-none invisible'
+                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98] cursor-pointer'
                         }`}
                       >
                         {/* Number */}

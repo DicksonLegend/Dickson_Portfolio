@@ -363,7 +363,7 @@ export const HackathonsEditorialSection: React.FC = () => {
               <div
                 className="relative overflow-visible"
                 style={{
-                  clipPath: 'inset(-200px 0 0 0)',
+                  clipPath: 'inset(-145px 0 0 0)',
                 }}
               >
                 <div
@@ -373,18 +373,26 @@ export const HackathonsEditorialSection: React.FC = () => {
                   {HACKATHONS.map((item, idx) => {
                     const isActive = activeIndex === idx
                     const isPast = idx < activeIndex
+                    const distanceInPast = activeIndex - idx
 
                     return (
                       <button
                         key={item.id}
                         type="button"
                         onClick={() => handleItemClick(idx)}
-                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none cursor-pointer ${
+                        disabled={isPast}
+                        className={`h-[48px] flex items-baseline gap-4 text-left transition-all duration-300 focus:outline-none ${
                           isActive
-                            ? 'text-black opacity-100 scale-100'
+                            ? 'text-black opacity-100 scale-100 cursor-pointer'
                             : isPast
-                            ? 'text-neutral-300 hover:text-neutral-500 opacity-40 hover:opacity-80 scale-[0.98]'
-                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98]'
+                            ? distanceInPast === 1
+                              ? 'text-neutral-400 opacity-35 scale-[0.98] pointer-events-none select-none'
+                              : distanceInPast === 2
+                              ? 'text-neutral-300 opacity-20 scale-[0.97] pointer-events-none select-none'
+                              : distanceInPast === 3
+                              ? 'text-neutral-200 opacity-10 scale-[0.96] pointer-events-none select-none'
+                              : 'opacity-0 pointer-events-none select-none invisible'
+                            : 'text-neutral-400 hover:text-neutral-600 opacity-30 hover:opacity-75 scale-[0.98] cursor-pointer'
                         }`}
                       >
                         {/* Number */}
