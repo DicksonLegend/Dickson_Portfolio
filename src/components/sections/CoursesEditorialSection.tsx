@@ -429,12 +429,12 @@ export const CoursesEditorialSection: React.FC = () => {
 
             </div>
 
-            {/* Mirrored Right Column (Cols 6-10): Scrolling Course Titles Track */}
-            <div className="col-span-12 md:col-span-5 relative">
+            {/* Mirrored Right Column (Cols 6-10): Scrolling Course Titles Track (Shifted right for balanced editorial layout) */}
+            <div className="col-span-12 md:col-span-5 relative md:pl-6 lg:pl-10 xl:pl-14 2xl:pl-16">
               <div
                 className="relative overflow-visible"
                 style={{
-                  clipPath: 'inset(-200px 0 0 0)',
+                  clipPath: 'inset(-200px -120px 0 0)',
                 }}
               >
                 <div
