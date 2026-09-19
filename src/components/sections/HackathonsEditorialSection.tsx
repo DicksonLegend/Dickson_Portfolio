@@ -167,10 +167,29 @@ const DIVIDER_WORDS = ['LEARNED', 'EARNED', 'BUILT', 'SHIPPED', 'EVOLVED', 'PROV
 
 const ITEM_HEIGHT = 48
 
+const JAGGED_CLIP_PATH = `polygon(
+  0% 0%,
+  100% 0%,
+  100% calc(100% - 12px),
+  97% 100%, 94% calc(100% - 12px), 91% 100%, 88% calc(100% - 12px),
+  85% 100%, 82% calc(100% - 12px), 79% 100%, 76% calc(100% - 12px),
+  73% 100%, 70% calc(100% - 12px), 67% 100%, 64% calc(100% - 12px),
+  61% 100%, 58% calc(100% - 12px), 55% 100%, 52% calc(100% - 12px),
+  49% 100%, 46% calc(100% - 12px), 43% 100%, 40% calc(100% - 12px),
+  37% 100%, 34% calc(100% - 12px), 31% 100%, 28% calc(100% - 12px),
+  25% 100%, 22% calc(100% - 12px), 19% 100%, 16% calc(100% - 12px),
+  13% 100%, 10% calc(100% - 12px), 7% 100%, 4% calc(100% - 12px),
+  1% 100%, 0% calc(100% - 12px)
+)`
+
 export const HackathonsEditorialSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const curtainRef = useRef<HTMLDivElement>(null)
+  const paperRef = useRef<HTMLDivElement>(null)
+  const rollRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [selectedModalCert, setSelectedModalCert] = useState<HackathonItem | null>(null)
 
@@ -217,7 +236,12 @@ export const HackathonsEditorialSection: React.FC = () => {
     }
   }, [selectedModalCert])
 
-  // Continuous, buttery-smooth GSAP ScrollTrigger timeline
+  // Continuous, buttery-smooth GSAP ScrollTrigger timeline:
+  // stageRef is pinned rock-solid at top: 0 via native compositor pin (zero shaking).
+  // Step 1: Printer paper feeds out smoothly, thermal text prints, heading appears.
+  // Step 2: The printer section itself lifts up smoothly as a curtain (yPercent: 0 -> -100),
+  // directly unveiling the static white certifications section with all details pre-rendered.
+  // Step 3: Once curtain has lifted, the hackathon list scrubs smoothly through items 1 to 6.
   useEffect(() => {
     if (prefersReducedMotion) return
     if (!containerRef.current || !stageRef.current || !listRef.current) return
@@ -225,34 +249,162 @@ export const HackathonsEditorialSection: React.FC = () => {
     const totalItems = HACKATHONS.length
     const totalDistance = (totalItems - 1) * ITEM_HEIGHT
 
-    // Initial position based on activeIndex
-    gsap.set(listRef.current, {
-      y: -(activeIndex * ITEM_HEIGHT),
-    })
+    // Initial positions
+    if (curtainRef.current) {
+      gsap.set(curtainRef.current, { yPercent: 0 })
+    }
+    if (paperRef.current) {
+      gsap.set(paperRef.current, {
+        transformOrigin: 'top center',
+        transformStyle: 'preserve-3d',
+        scaleY: 0.08,
+        rotateX: -55,
+        y: -50,
+        opacity: 0.85,
+      })
+    }
+    if (rollRef.current) {
+      gsap.set(rollRef.current, { scaleX: 1, opacity: 0.9 })
+    }
+    const lineElements = curtainRef.current?.querySelectorAll<HTMLElement>('.receipt-line-item')
+    if (lineElements && lineElements.length > 0) {
+      gsap.set(lineElements, { opacity: 0, y: 10 })
+    }
+    if (headingRef.current) {
+      gsap.set(headingRef.current, { opacity: 0, y: 35 })
+    }
+    if (listRef.current) {
+      gsap.set(listRef.current, {
+        y: -(activeIndex * ITEM_HEIGHT),
+      })
+    }
 
     const ctx = gsap.context(() => {
-      const st = ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        pin: stageRef.current,
-        anticipatePin: 1,
-        scrub: 0.3,
-        onUpdate: (self) => {
-          const rawProgress = self.progress * (totalItems - 1)
-          const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
-          setActiveIndex(currentIdx)
-
-          // Continuous vertical translation
-          if (listRef.current) {
-            gsap.set(listRef.current, {
-              y: -self.progress * totalDistance,
-            })
-          }
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: stageRef.current,
+          anticipatePin: 1,
+          scrub: 0.4,
+          onUpdate: (self) => {
+            const listStartRatio = 0.50
+            if (self.progress <= listStartRatio) {
+              setActiveIndex(0)
+            } else {
+              const listProg = (self.progress - listStartRatio) / (1 - listStartRatio)
+              const rawProgress = listProg * (totalItems - 1)
+              const currentIdx = Math.min(totalItems - 1, Math.max(0, Math.round(rawProgress)))
+              setActiveIndex(currentIdx)
+            }
+          },
         },
       })
 
-      scrollTriggerRef.current = st
+      // Step 1: Receipt unrolling & line items printing
+      if (paperRef.current) {
+        tl.to(
+          paperRef.current,
+          {
+            opacity: 1,
+            scaleY: 1,
+            rotateX: 0,
+            y: 0,
+            duration: 1.4,
+            ease: 'power2.out',
+            onStart: () => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('trigger-cert-achievement'))
+              }
+            },
+          },
+          0
+        )
+        // Subtle paper feeder jitter
+        tl.to(
+          paperRef.current,
+          {
+            keyframes: [
+              { rotateZ: 0, x: 0 },
+              { rotateZ: -0.6, x: -1.2 },
+              { rotateZ: 0.6, x: 1.2 },
+              { rotateZ: -0.3, x: -0.6 },
+              { rotateZ: 0.3, x: 0.6 },
+              { rotateZ: 0, x: 0 },
+            ],
+            duration: 1.4,
+            ease: 'none',
+          },
+          0
+        )
+      }
+
+      if (rollRef.current) {
+        tl.to(
+          rollRef.current,
+          {
+            scaleX: 0.35,
+            opacity: 0.25,
+            duration: 1.3,
+            ease: 'power2.out',
+          },
+          0
+        )
+      }
+
+      if (lineElements && lineElements.length > 0) {
+        tl.to(
+          lineElements,
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.12,
+            duration: 0.7,
+            ease: 'power1.out',
+          },
+          0.3
+        )
+      }
+
+      if (headingRef.current) {
+        tl.to(
+          headingRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+          },
+          0.8
+        )
+      }
+
+      // Step 2: The printer section itself lifts up smoothly to unveil the white certifications section
+      if (curtainRef.current) {
+        tl.to(
+          curtainRef.current,
+          {
+            yPercent: -100,
+            ease: 'power1.inOut',
+            duration: 1.5,
+          },
+          '>+=0.25'
+        )
+      }
+
+      // Step 3: Gliding list scrubs through items 1 to 6
+      tl.to(
+        listRef.current,
+        {
+          y: -totalDistance,
+          ease: 'none',
+          duration: 3.2,
+        },
+        curtainRef.current ? '>+=0.1' : 0
+      )
+
+      scrollTriggerRef.current = tl.scrollTrigger || null
     }, containerRef)
 
     ScrollTrigger.refresh()
@@ -281,11 +433,13 @@ export const HackathonsEditorialSection: React.FC = () => {
       })
     }
 
-    // Accurately scroll the window to the exact ScrollTrigger scroll position
+    // Accurately scroll the window accounting for the initial printer reveal phase
     const st = scrollTriggerRef.current
     if (st) {
-      const progress = index / (totalItems - 1)
-      const targetScroll = st.start + progress * (st.end - st.start)
+      const listStartRatio = 0.50
+      const listProg = index / (totalItems - 1)
+      const overallProgress = listStartRatio + listProg * (1 - listStartRatio)
+      const targetScroll = st.start + overallProgress * (st.end - st.start)
       window.scrollTo({
         top: targetScroll,
         behavior: 'smooth',
@@ -311,7 +465,7 @@ export const HackathonsEditorialSection: React.FC = () => {
       aria-label="Hackathons and Arena Battle Records"
       className="relative w-full bg-white text-black select-none transition-colors duration-400"
       style={{
-        height: prefersReducedMotion ? 'auto' : '300vh',
+        height: prefersReducedMotion ? 'auto' : '480vh',
       }}
     >
       {/* Pinned Stage Canvas (Pure White, stark black high-fashion editorial) */}
@@ -320,6 +474,162 @@ export const HackathonsEditorialSection: React.FC = () => {
         data-navbar-theme="light"
         className="relative w-full h-screen min-h-[680px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden"
       >
+        {/* Dark Printer Curtain Panel (Seamless Transition from Projects to Certifications) */}
+        {!prefersReducedMotion && (
+          <div
+            ref={curtainRef}
+            id="certifications-curtain"
+            className="absolute inset-0 bg-[#0c0f12] text-[#fbf9f2] z-40 overflow-hidden flex flex-col justify-center items-center px-4 py-8 sm:py-12 select-none border-b border-neutral-700/60 shadow-[0_25px_60px_rgba(0,0,0,0.9)] will-change-transform"
+          >
+            {/* Background Ambient Glows: Cyan & Amber */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_30%,rgba(0,229,255,0.08),transparent_70%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_75%,rgba(240,169,58,0.05),transparent_50%)] pointer-events-none" />
+
+            <div className="relative max-w-4xl w-full mx-auto flex flex-col items-center text-center z-10">
+              {/* Small Mono Line Above Dispenser */}
+              <div className="mb-2 sm:mb-3 inline-flex items-center gap-2 font-mono text-xs sm:text-sm tracking-widest text-[var(--accent)] font-medium">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent-glow)] animate-pulse" />
+                <span>yes, I kept every certificate. no, I'm not sorry.</span>
+              </div>
+
+              {/* Physical Printer Dispenser Slot & Feeder Bundle */}
+              <div className="relative w-72 sm:w-88 flex flex-col items-center">
+                <div
+                  ref={rollRef}
+                  className="w-48 h-2 rounded-full bg-[#eee9dc] border border-[#d8d3c5] shadow-inner mb-0.5 pointer-events-none z-30"
+                  title="Paper Feed Core"
+                />
+                <div className="relative z-30 w-full h-4 bg-[#0d1015] border border-neutral-700/60 ring-1 ring-[var(--accent)]/30 rounded-t-lg shadow-[inset_0_2px_4px_rgba(0,0,0,0.9),0_0_15px_rgba(0,229,255,0.15)] flex items-center justify-center">
+                  <div className="w-[90%] h-1 bg-[#020406] rounded-full shadow-[inset_0_1px_2px_rgba(0,0,0,1)]" />
+                </div>
+
+                {/* 3D Folding & Sliding Receipt Paper */}
+                <div
+                  className="w-full relative z-20 filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)]"
+                  style={{ perspective: '1200px' }}
+                >
+                  <div
+                    ref={paperRef}
+                    style={{
+                      clipPath: JAGGED_CLIP_PATH,
+                      WebkitClipPath: JAGGED_CLIP_PATH,
+                      transformOrigin: 'top center',
+                      transformStyle: 'preserve-3d',
+                    }}
+                    className="w-full bg-[#fbf9f2] text-[#1c1d1f] font-mono text-left px-5 sm:px-6 pt-3 pb-6 sm:pb-7 overflow-hidden shadow-inner border-x border-[#ebe7dc] relative"
+                  >
+                    {/* Subtle paper watermark sheen */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/[0.04] via-transparent to-black/[0.02] pointer-events-none" />
+
+                    {/* Simulated Paper Fold Creases */}
+                    <div className="absolute top-[32%] inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-black/[0.07] to-transparent pointer-events-none shadow-[0_1px_1px_rgba(255,255,255,0.8)]" />
+                    <div className="absolute top-[64%] inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-black/[0.07] to-transparent pointer-events-none shadow-[0_1px_1px_rgba(255,255,255,0.8)]" />
+
+                    {/* Receipt Header */}
+                    <div className="receipt-line-item text-center pb-2 mb-2 border-b border-dashed border-neutral-300">
+                      <div className="text-[10px] sm:text-[10.5px] font-bold tracking-widest text-neutral-800">
+                        DICKSON ELECTRONIC ARCHIVE
+                      </div>
+                      <div className="text-[8px] sm:text-[8.5px] text-neutral-500 tracking-wider mt-0.5">
+                        POS #01 · AUTH: PASS · TRICHY NODE
+                      </div>
+                      <div className="text-[8px] sm:text-[8.5px] text-neutral-400 tracking-wider">
+                        ================================
+                      </div>
+                    </div>
+
+                    {/* Line-by-Line Thermal Lines */}
+                    <div className="space-y-1 sm:space-y-1.5 text-xs leading-relaxed">
+                      <div className="receipt-line-item font-bold text-[10px] sm:text-[11px] text-neutral-900 border-b border-dashed border-neutral-200 pb-1 mb-1 tracking-tight">
+                        DICKSON E — OFFICIAL PROOF OF CURIOSITY
+                      </div>
+                      <div className="receipt-line-item flex items-center justify-between text-neutral-700 font-medium text-[11px] sm:text-xs">
+                        <span>PROJECTS SHIPPED</span>
+                        <span className="font-semibold text-neutral-900">......... 8</span>
+                      </div>
+                      <div className="receipt-line-item flex items-center justify-between text-neutral-700 font-medium text-[11px] sm:text-xs">
+                        <span>HACKATHONS SURVIVED</span>
+                        <span className="font-semibold text-neutral-900">...... 6</span>
+                      </div>
+                      <div className="receipt-line-item flex items-center justify-between text-neutral-700 font-medium text-[11px] sm:text-xs">
+                        <span>CERTIFICATES EARNED</span>
+                        <span className="font-semibold text-neutral-900">...... 30</span>
+                      </div>
+                      <div className="receipt-line-item flex items-center justify-between text-neutral-700 font-medium text-[11px] sm:text-xs">
+                        <span>COFFEE CONSUMED</span>
+                        <span className="inline-flex items-center gap-1">
+                          <span className="text-neutral-400">..........</span>
+                          <span className="bg-neutral-900 text-neutral-900 px-1 py-0.5 rounded-sm select-none" title="Classified">
+                            REDACTED
+                          </span>
+                        </span>
+                      </div>
+                      <div className="receipt-line-item flex items-center justify-between font-semibold text-[11px] sm:text-xs">
+                        <span className="text-neutral-900">STATUS</span>
+                        <span className="text-[#0891b2] font-bold">
+                          ... STILL CURIOUS
+                        </span>
+                      </div>
+                      <div className="receipt-line-item text-center font-bold text-[10px] sm:text-[10.5px] pt-1 border-t border-dashed border-neutral-300 text-neutral-800 tracking-wider">
+                        *** THANK YOU FOR SCROLLING ***
+                      </div>
+                    </div>
+
+                    {/* Bottom Barcode & Serial ID */}
+                    <div className="receipt-line-item mt-2 pt-1.5 border-t border-dashed border-neutral-300 flex flex-col items-center text-center text-neutral-400">
+                      <div className="flex items-center gap-[2px] h-4 sm:h-5 mb-1 opacity-75">
+                        {[3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9, 3, 2, 3, 8, 4, 6, 2, 6, 4, 3, 3, 8, 3, 2, 7].map((w, i) => (
+                          <div key={i} className="bg-neutral-800 h-full" style={{ width: `${(w % 3) + 1.2}px` }} />
+                        ))}
+                      </div>
+                      <span className="text-[7.5px] sm:text-[8px] tracking-widest font-mono text-neutral-500 uppercase">
+                        VERIFIED BUILDER ID · #DE-2026-30
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Big Display Heading */}
+              <div ref={headingRef} className="mt-5 sm:mt-7 text-center max-w-3xl">
+                <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.1] uppercase font-sans text-white">
+                  THE PAPER TRAIL OF A{' '}
+                  <span className="text-[#f0a93a] drop-shadow-[0_0_25px_rgba(240,169,58,0.5)]">
+                    RELENTLESS
+                  </span>{' '}
+                  BUILDER
+                </h2>
+                <p className="mt-2 text-xs sm:text-sm font-mono text-neutral-400 tracking-wide max-w-xl mx-auto">
+                  30 verified credentials across AI, Cloud, Microservices, Data Science, and Hackathon arena battles.
+                </p>
+
+                {/* Smooth scroll cue arrow */}
+                <div className="mt-3 inline-flex items-center justify-center text-[var(--accent)] animate-bounce">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (scrollTriggerRef.current) {
+                        const st = scrollTriggerRef.current
+                        const targetScroll = st.start + 0.50 * (st.end - st.start)
+                        window.scrollTo({ top: targetScroll, behavior: 'smooth' })
+                      }
+                    }}
+                    className="p-1.5 rounded-full hover:bg-white/5 transition-colors focus:outline-none cursor-pointer"
+                    title="Continue to Certifications"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Cyan accent hairline along bottom border */}
+            <div className="absolute bottom-0 inset-x-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[var(--accent)]/50 to-transparent pointer-events-none" />
+          </div>
+        )}
+
         {/* Top Area: Large Impact Headline with tight leading */}
         <div className="w-full pt-10 sm:pt-14 md:pt-16">
           <h2

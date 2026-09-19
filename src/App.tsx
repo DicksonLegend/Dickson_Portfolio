@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeProvider } from './context/ThemeContext'
 import { Navbar, IntroLoader } from './components/layout'
-import { Hero, About, BookSkillsSection, Statement, Projects, ReceiptTransition, HackathonsEditorialSection, CoursesEditorialSection } from './components/sections'
+import { Hero, About, BookSkillsSection, Statement, Projects, HackathonsEditorialSection, CoursesEditorialSection } from './components/sections'
 import { CustomCursor, AchievementToast } from './components/ui'
 import { useScrollSpy } from './hooks/useScrollSpy'
 import { RotateCcw } from 'lucide-react'
@@ -49,7 +49,6 @@ export function AppContent() {
               <BookSkillsSection />
               <Statement />
               <Projects />
-              <ReceiptTransition />
               <HackathonsEditorialSection />
               <CoursesEditorialSection />
             </main>

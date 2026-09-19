@@ -182,7 +182,7 @@ export const ReceiptTransition: React.FC = () => {
       <section
         id="receipt-transition"
         aria-label="Projects to Certifications Transition"
-        className="relative w-full bg-[var(--bg)] text-[var(--text)] py-20 px-4 sm:px-8 overflow-hidden select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
+        className="relative z-20 w-full min-h-screen bg-[#0c0f12] text-[#fbf9f2] py-20 px-4 sm:px-8 overflow-hidden select-none border-t border-neutral-800/80 transition-colors duration-400"
       >
         <div className="relative max-w-4xl mx-auto flex flex-col items-center text-center">
           <div className="mb-4 inline-flex items-center gap-2 font-mono text-xs sm:text-sm tracking-widest text-[var(--accent)] font-medium">
@@ -207,10 +207,10 @@ export const ReceiptTransition: React.FC = () => {
           </div>
 
           <div className="mt-10 text-center max-w-3xl">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-[var(--textTitle)]">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-white">
               THE PAPER TRAIL OF A <span className="text-[#f0a93a] drop-shadow-[0_0_25px_rgba(240,169,58,0.5)]">RELENTLESS</span> BUILDER
             </h2>
-            <p className="mt-3 text-xs sm:text-sm font-mono text-[var(--textLight)]">
+            <p className="mt-3 text-xs sm:text-sm font-mono text-neutral-400">
               30 verified credentials across AI, Cloud, Microservices, Data Science, and Hackathon arena battles.
             </p>
           </div>
@@ -224,12 +224,12 @@ export const ReceiptTransition: React.FC = () => {
       ref={sectionRef}
       id="receipt-transition"
       aria-label="Projects to Certifications Transition"
-      className="relative w-full bg-[var(--bg)] text-[var(--text)] select-none border-t border-[var(--border-subtle)] transition-colors duration-400"
+      className="relative z-20 w-full min-h-screen bg-[#0c0f12] text-[#fbf9f2] select-none border-t border-neutral-800/80 transition-colors duration-400"
     >
       {/* Scroll-Triggered Stage: Flows naturally with page scroll */}
       <div
         ref={pinRef}
-        className="relative w-full min-h-[85vh] flex flex-col items-center justify-center overflow-hidden px-4 py-20 sm:py-28"
+        className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 py-20 sm:py-28 bg-[#0c0f12]"
       >
         {/* Background Ambient Glows: Cyan & Amber (Exact Hero Palette Match) */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_30%,rgba(0,229,255,0.08),transparent_70%)] pointer-events-none" />
@@ -372,14 +372,14 @@ export const ReceiptTransition: React.FC = () => {
             ref={headingRef}
             className="mt-8 sm:mt-10 text-center max-w-3xl"
           >
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] uppercase font-sans text-[var(--textTitle)]">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1] uppercase font-sans text-white">
               THE PAPER TRAIL OF A{' '}
               <span className="text-[#f0a93a] drop-shadow-[0_0_25px_rgba(240,169,58,0.5)]">
                 RELENTLESS
               </span>{' '}
               BUILDER
             </h2>
-            <p className="mt-3 text-xs sm:text-sm font-mono text-[var(--textLight)] tracking-wide max-w-xl mx-auto">
+            <p className="mt-3 text-xs sm:text-sm font-mono text-neutral-400 tracking-wide max-w-xl mx-auto">
               30 verified credentials across AI, Cloud, Microservices, Data Science, and Hackathon arena battles.
             </p>
 
@@ -387,6 +387,14 @@ export const ReceiptTransition: React.FC = () => {
             <div className="mt-4 inline-flex items-center justify-center text-[var(--accent)] animate-bounce">
               <a
                 href="#certifications"
+                onClick={(e) => {
+                  e.preventDefault()
+                  const target = document.getElementById('certifications')
+                  if (target) {
+                    const targetScroll = target.offsetTop + window.innerHeight * 0.85
+                    window.scrollTo({ top: targetScroll, behavior: 'smooth' })
+                  }
+                }}
                 className="p-1.5 rounded-full hover:bg-white/5 transition-colors focus:outline-none"
                 title="Continue to Certifications"
               >
