@@ -257,10 +257,10 @@ export const HackathonsEditorialSection: React.FC = () => {
       gsap.set(paperRef.current, {
         transformOrigin: 'top center',
         transformStyle: 'preserve-3d',
-        scaleY: 0.08,
-        rotateX: -55,
-        y: -50,
-        opacity: 0.85,
+        scaleY: 0,
+        rotateX: 0,
+        y: 0,
+        opacity: 0,
       })
     }
     if (rollRef.current) {
@@ -505,7 +505,7 @@ export const HackathonsEditorialSection: React.FC = () => {
 
                 {/* 3D Folding & Sliding Receipt Paper */}
                 <div
-                  className="w-full relative z-20 filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)]"
+                  className="w-full relative z-20 filter drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] drop-shadow-[0_4px_10px_rgba(0,0,0,0.35)] -mt-1"
                   style={{ perspective: '1200px' }}
                 >
                   <div
