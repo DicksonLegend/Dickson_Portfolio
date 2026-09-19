@@ -306,6 +306,7 @@ export const HackathonsEditorialSection: React.FC = () => {
   return (
     <section
       id="certifications"
+      data-navbar-theme="light"
       ref={containerRef}
       aria-label="Hackathons and Arena Battle Records"
       className="relative w-full bg-white text-black select-none transition-colors duration-400"
@@ -316,6 +317,7 @@ export const HackathonsEditorialSection: React.FC = () => {
       {/* Pinned Stage Canvas (Pure White, stark black high-fashion editorial) */}
       <div
         ref={stageRef}
+        data-navbar-theme="light"
         className="relative w-full h-screen min-h-[680px] flex flex-col justify-between px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-10 bg-white overflow-hidden"
       >
         {/* Top Area: Large Impact Headline with tight leading */}

@@ -46,7 +46,52 @@ interface MoreItem {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
   const { theme } = useTheme()
-  const isLight = theme === 'light'
+  const [isOverLightSection, setIsOverLightSection] = useState(false)
+
+  // Track if the navbar is physically hovering over a white/light-background section
+  useEffect(() => {
+    let ticking = false
+
+    const checkOverlap = () => {
+      const lightElements = document.querySelectorAll<HTMLElement>(
+        '[data-navbar-theme="light"], #certifications, #credentials'
+      )
+      // The floating navbar dock is centered at vertical Y ≈ 48px from viewport top
+      const navCenterY = 48
+
+      let overLight = false
+      for (let i = 0; i < lightElements.length; i++) {
+        const el = lightElements[i]
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= navCenterY && rect.bottom > navCenterY) {
+          overLight = true
+          break
+        }
+      }
+
+      setIsOverLightSection(overLight)
+      ticking = false
+    }
+
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(checkOverlap)
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true })
+    window.addEventListener('resize', onScrollOrResize, { passive: true })
+    checkOverlap()
+
+    return () => {
+      window.removeEventListener('scroll', onScrollOrResize)
+      window.removeEventListener('resize', onScrollOrResize)
+    }
+  }, [])
+
+  // Automatically adopt light mode styles when over white sections or when light theme is active
+  const isLight = theme === 'light' || isOverLightSection
 
   const [moreDropdownOpen, setMoreDropdownOpen] = useState(false)
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
@@ -127,7 +172,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
   return createPortal(
     <>
       {/* Fixed Top Header Container */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-12 py-4 pointer-events-none select-none">
+      <header
+        data-nav-theme={isLight ? 'light' : 'dark'}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-12 py-4 pointer-events-none select-none transition-all duration-400 ${
+          isLight ? 'nav-light-theme' : ''
+        }`}
+      >
         
         {/* Left: Brand Monogram (Crystal Glass Lens) */}
         <div className="pointer-events-auto z-10">
@@ -408,7 +458,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
 
           {/* Theme Toggle */}
           <div className="relative">
-            <ThemeToggle />
+            <ThemeToggle isNavLight={isLight} />
           </div>
 
           {/* Mobile Menu Toggle Button */}

@@ -203,12 +203,24 @@ body {
     0 6px 22px rgba(0, 0, 0, 0.4);
 }
 
+.crystal-dock,
+.crystal-lens,
+.crystal-pill-active,
+.crystal-btn {
+  transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* --------------------------------------------------------------------------
    Light Mode Crystal Styles (Pristine Frosted White Crystal Glass)
    -------------------------------------------------------------------------- */
 html.light .crystal-dock,
-[data-theme='light'] .crystal-dock {
-  background: rgba(255, 255, 255, 0.82);
+[data-theme='light'] .crystal-dock,
+.nav-light-theme .crystal-dock,
+[data-nav-theme='light'] .crystal-dock {
+  background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -221,24 +233,28 @@ html.light .crystal-dock,
 }
 
 html.light .crystal-lens,
-[data-theme='light'] .crystal-lens {
-  background: rgba(255, 255, 255, 0.85);
+[data-theme='light'] .crystal-lens,
+.nav-light-theme .crystal-lens,
+[data-nav-theme='light'] .crystal-lens {
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.10);
   border-top-color: rgba(255, 255, 255, 1);
   box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.06),
+    0 4px 14px rgba(0, 0, 0, 0.08),
     inset 0 1px 1px 0 rgba(255, 255, 255, 1);
   color: #1a1a1a;
 }
 
 html.light .crystal-pill-active,
-[data-theme='light'] .crystal-pill-active {
+[data-theme='light'] .crystal-pill-active,
+.nav-light-theme .crystal-pill-active,
+[data-nav-theme='light'] .crystal-pill-active {
   background: #ffffff;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-top-color: rgba(255, 255, 255, 1);
   box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.08),
@@ -247,7 +263,9 @@ html.light .crystal-pill-active,
 }
 
 html.light .crystal-btn,
-[data-theme='light'] .crystal-btn {
+[data-theme='light'] .crystal-btn,
+.nav-light-theme .crystal-btn,
+[data-nav-theme='light'] .crystal-btn {
   background: #111111;
   color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.3);
@@ -258,7 +276,9 @@ html.light .crystal-btn,
 }
 
 html.light .crystal-btn:hover,
-[data-theme='light'] .crystal-btn:hover {
+[data-theme='light'] .crystal-btn:hover,
+.nav-light-theme .crystal-btn:hover,
+[data-nav-theme='light'] .crystal-btn:hover {
   background: #000000;
   box-shadow:
     0 5px 16px rgba(0, 0, 0, 0.22);
