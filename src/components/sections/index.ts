@@ -7,4 +7,5 @@ export * from './ReceiptTransition'
 export * from './HackathonsEditorialSection'
 export * from './CoursesEditorialSection'
 export * from './CertificationsSection'
+export * from './ArchiveCertificatesSection'
 

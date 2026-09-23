@@ -269,7 +269,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
             }`} />
 
             {navItems.map((item) => {
-              const isActive = activeSection === item.id
+              const isCertActive = activeSection === 'certifications' || activeSection === 'credentials' || activeSection === 'archive'
+              const isActive = activeSection === item.id || (item.id === 'certifications' && isCertActive)
 
               return (
                 <a
@@ -519,24 +520,29 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
             }`} />
 
             <div className="relative z-10 flex flex-col gap-2">
-              {navItems.map((item) => (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-2.5 rounded-xl text-base font-medium transition-all ${
-                    activeSection === item.id
-                      ? isLight
-                        ? 'crystal-pill-active text-neutral-950 font-semibold'
-                        : 'crystal-pill-active text-white font-semibold'
-                      : isLight
-                        ? 'text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100'
-                        : 'text-white/70 hover:text-white hover:bg-white/[0.12]'
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
+              {navItems.map((item) => {
+                const isCertActive = activeSection === 'certifications' || activeSection === 'credentials' || activeSection === 'archive'
+                const isActive = activeSection === item.id || (item.id === 'certifications' && isCertActive)
+
+                return (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-2.5 rounded-xl text-base font-medium transition-all ${
+                      isActive
+                        ? isLight
+                          ? 'crystal-pill-active text-neutral-950 font-semibold'
+                          : 'crystal-pill-active text-white font-semibold'
+                        : isLight
+                          ? 'text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100'
+                          : 'text-white/70 hover:text-white hover:bg-white/[0.12]'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                )
+              })}
             </div>
 
             <div className={`relative z-10 pt-3 flex flex-col gap-2 ${
@@ -660,6 +666,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection = 'hero' }) => {
                       <span className={`font-mono text-xs ${isLight ? 'text-neutral-400' : 'text-white/40'}`}>↵</span>
                     </a>
                   ))}
+                  <a
+                    href="#archive"
+                    onClick={() => setCommandPaletteOpen(false)}
+                    className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all cursor-pointer ${
+                      isLight
+                        ? 'text-neutral-800 hover:bg-neutral-100'
+                        : 'text-white hover:bg-white/[0.14] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]'
+                    }`}
+                  >
+                    <span>Go to Additional Accreditations</span>
+                    <span className={`font-mono text-xs ${isLight ? 'text-neutral-400' : 'text-white/40'}`}>↵</span>
+                  </a>
 
                   <div className={`text-[11px] font-mono tracking-wider uppercase px-3 py-1 mt-2 ${
                     isLight ? 'text-neutral-400 font-medium' : 'text-white/50'
