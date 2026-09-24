@@ -313,19 +313,16 @@ export const ArchiveCertificatesSection: React.FC = () => {
         </div>
       </div>
 
-      {/* MAIN CARD CONTAINER (withhoney.com rounded charcoal container card sliding into view) */}
-      <div className="relative max-w-6xl mx-auto px-3 sm:px-6 md:px-8">
+      {/* MAIN CARD CONTAINER (withhoney.com rounded container card covering almost entire page) */}
+      <div className="relative w-full px-2 sm:px-4 md:px-6 max-w-[1740px] mx-auto">
         <div
           ref={containerRef}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoveredItem(null)}
-          className="relative w-full rounded-t-[36px] sm:rounded-t-[48px] rounded-b-[24px] sm:rounded-b-[36px] bg-[#14161a] border border-white/[0.08] shadow-[0_30px_100px_rgba(0,0,0,0.95)] px-5 sm:px-10 md:px-14 py-12 sm:py-20 overflow-hidden"
+          className="relative w-full rounded-t-[32px] sm:rounded-t-[48px] md:rounded-t-[56px] rounded-b-[24px] sm:rounded-b-[36px] bg-[#121316] border-t border-x border-white/[0.08] shadow-[0_30px_100px_rgba(0,0,0,0.95)] px-6 sm:px-12 md:px-16 lg:px-20 py-10 sm:py-16 md:py-20 overflow-hidden"
         >
-          {/* Subtle grid background texture */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
-
-          {/* MONOSPACE NUMBERED LIST (Exact withhoney.com pool rules list) */}
-          <div className="relative z-10 flex flex-col space-y-4 sm:space-y-6">
+          {/* MONOSPACE NUMBERED LIST (Exact withhoney.com pool rules list - left aligned with tight line spacing) */}
+          <div className="relative z-10 flex flex-col space-y-1.5 sm:space-y-2">
             {ARCHIVE_CERTS.map((item) => {
               const isActive = activeItem.id === item.id
               const isHovered = hoveredItem?.id === item.id
@@ -342,25 +339,25 @@ export const ArchiveCertificatesSection: React.FC = () => {
                     setHoveredItem(item)
                     setActiveItem(item)
                   }}
-                  className="group relative flex items-baseline cursor-pointer transition-all duration-150 py-1.5 sm:py-2"
+                  className="group relative flex items-baseline cursor-pointer transition-colors duration-150 py-1 sm:py-1.5"
                 >
                   {/* Number + Title in withhoney format: 001. TITLE. */}
                   <div
-                    className={`font-mono tracking-tight sm:tracking-[-0.03em] uppercase transition-colors duration-150 text-lg sm:text-2xl md:text-3xl lg:text-[32px] leading-[1.25] ${
+                    className={`font-mono tracking-[-0.02em] uppercase transition-colors duration-150 text-sm sm:text-base md:text-lg lg:text-[20px] xl:text-[22px] leading-snug ${
                       isHighlighted
                         ? 'text-white font-bold'
-                        : 'text-[#383b42] font-semibold hover:text-neutral-400'
+                        : 'text-[#484b54] font-medium hover:text-neutral-400'
                     }`}
                   >
                     {/* 3-Digit Number */}
-                    <span className="inline-block mr-2 sm:mr-3">
+                    <span className="inline-block mr-2 sm:mr-3 shrink-0">
                       {item.number}
                       {/* Signature Neon Red Period After Number */}
                       <span
                         className={`inline-block font-bold transition-all duration-150 ${
                           isHighlighted
-                            ? 'text-[#ff3b53] drop-shadow-[0_0_10px_rgba(255,59,83,0.9)] scale-110 ml-0.5'
-                            : 'text-[#383b42]'
+                            ? 'text-[#ff3b53] drop-shadow-[0_0_10px_rgba(255,59,83,0.9)] ml-0.5'
+                            : 'text-[#484b54]'
                         }`}
                       >
                         .
@@ -374,8 +371,8 @@ export const ArchiveCertificatesSection: React.FC = () => {
                     <span
                       className={`inline-block font-bold transition-all duration-150 ${
                         isHighlighted
-                          ? 'text-[#ff3b53] drop-shadow-[0_0_10px_rgba(255,59,83,0.9)] scale-110 ml-0.5'
-                          : 'text-[#383b42]'
+                          ? 'text-[#ff3b53] drop-shadow-[0_0_10px_rgba(255,59,83,0.9)] ml-0.5'
+                          : 'text-[#484b54]'
                       }`}
                     >
                       .
