@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 *.bak
+
+# Reference media, recordings, and extracted scratch frames
+Reference/
+scratch/
+*.mp4
