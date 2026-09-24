@@ -215,19 +215,92 @@ export const ArchiveCertificatesSection: React.FC = () => {
   const [copiedId, setCopiedId] = useState(false)
   
   const containerRef = useRef<HTMLDivElement>(null)
+  const lastMousePosRef = useRef<{ x: number; y: number } | null>(null)
+  const isInsideContainerRef = useRef(false)
 
   // Smooth mouse coordinates with spring physics for the floating popup card
   const springConfig = { damping: 25, stiffness: 320 }
   const mouseX = useSpring(0, springConfig)
   const mouseY = useSpring(0, springConfig)
 
-  // Track mouse move over the list container with edge clamping
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const clampedX = Math.min(e.clientX + 32, window.innerWidth - 270)
-    const clampedY = Math.max(e.clientY - 110, 80)
-    mouseX.set(clampedX)
-    mouseY.set(clampedY)
+  // Update hover detection based on cursor position (even while scrolling)
+  const updateHoverOnPosition = (clientX: number, clientY: number) => {
+    if (!containerRef.current) return
+    const cRect = containerRef.current.getBoundingClientRect()
+
+    // Check if cursor is inside container bounds horizontally and vertically
+    if (
+      clientX < cRect.left ||
+      clientX > cRect.right ||
+      clientY < cRect.top ||
+      clientY > cRect.bottom
+    ) {
+      if (isInsideContainerRef.current) {
+        isInsideContainerRef.current = false
+        setHoveredItem(null)
+      }
+      return
+    }
+
+    isInsideContainerRef.current = true
+
+    // Find row whose vertical bounding box intersects clientY
+    const rowElements = containerRef.current.querySelectorAll<HTMLElement>('[data-cert-id]')
+    let foundCert: ArchiveCertItem | null = null
+
+    for (let i = 0; i < rowElements.length; i++) {
+      const row = rowElements[i]
+      const rRect = row.getBoundingClientRect()
+      // Check if mouse Y falls within this row's vertical bounds
+      if (clientY >= rRect.top - 2 && clientY <= rRect.bottom + 2) {
+        const certId = row.getAttribute('data-cert-id')
+        foundCert = ARCHIVE_CERTS.find((c) => c.id === certId) || null
+        break
+      }
+    }
+
+    if (foundCert) {
+      setHoveredItem(foundCert)
+      setActiveItem(foundCert)
+      const clampedX = Math.min(clientX + 32, window.innerWidth - 270)
+      const clampedY = Math.max(clientY - 110, 80)
+      mouseX.set(clampedX)
+      mouseY.set(clampedY)
+    }
   }
+
+  // Handle continuous tracking during scroll, wheel, and global mouse movement
+  useEffect(() => {
+    let ticking = false
+
+    const handleWindowMouseMove = (e: MouseEvent) => {
+      lastMousePosRef.current = { x: e.clientX, y: e.clientY }
+      updateHoverOnPosition(e.clientX, e.clientY)
+    }
+
+    const handleScrollOrWheel = () => {
+      if (!lastMousePosRef.current) return
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (lastMousePosRef.current) {
+            updateHoverOnPosition(lastMousePosRef.current.x, lastMousePosRef.current.y)
+          }
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('mousemove', handleWindowMouseMove, { passive: true })
+    window.addEventListener('scroll', handleScrollOrWheel, { passive: true })
+    window.addEventListener('wheel', handleScrollOrWheel, { passive: true })
+
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove)
+      window.removeEventListener('scroll', handleScrollOrWheel)
+      window.removeEventListener('wheel', handleScrollOrWheel)
+    }
+  }, [])
 
   // Lock background scroll when modal is open
   useEffect(() => {
@@ -317,7 +390,6 @@ export const ArchiveCertificatesSection: React.FC = () => {
       <div className="relative w-full px-2 sm:px-4 md:px-6 max-w-[1740px] mx-auto">
         <div
           ref={containerRef}
-          onMouseMove={handleMouseMove}
           onMouseLeave={() => setHoveredItem(null)}
           className="relative w-full rounded-t-[32px] sm:rounded-t-[48px] md:rounded-t-[56px] rounded-b-[24px] sm:rounded-b-[36px] bg-[#121316] border-t border-x border-white/[0.08] shadow-[0_30px_100px_rgba(0,0,0,0.95)] px-6 sm:px-12 md:px-16 lg:px-20 py-10 sm:py-16 md:py-20 overflow-hidden"
         >
@@ -331,6 +403,7 @@ export const ArchiveCertificatesSection: React.FC = () => {
               return (
                 <div
                   key={item.id}
+                  data-cert-id={item.id}
                   onClick={() => {
                     setActiveItem(item)
                     setSelectedModalCert(item)
@@ -339,7 +412,7 @@ export const ArchiveCertificatesSection: React.FC = () => {
                     setHoveredItem(item)
                     setActiveItem(item)
                   }}
-                  className="group relative flex items-baseline cursor-pointer transition-colors duration-150 py-1 sm:py-1.5"
+                  className="group relative flex items-baseline cursor-pointer transition-colors duration-150 py-1 sm:py-1.5 w-full"
                 >
                   {/* Number + Title in withhoney format: 001. TITLE. */}
                   <div
